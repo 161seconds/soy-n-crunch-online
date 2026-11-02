@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1">
+      <stop stop-color="#101e30"/>
+      <stop offset="1" stop-color="#29434b"/>
+    </linearGradient>
+    <linearGradient id="lake" x2="0" y2="1">
+      <stop stop-color="#244b59"/>
+      <stop offset="1" stop-color="#153642"/>
+    </linearGradient>
+    <linearGradient id="terrace" x2="0" y2="1">
+      <stop stop-color="#535f52"/>
+      <stop offset="1" stop-color="#817a59"/>
+    </linearGradient>
+    <linearGradient id="sunflower" x2="1" y2="1">
+      <stop stop-color="#f2cc6e"/>
+      <stop offset="1" stop-color="#a87b38"/>
+    </linearGradient>
+    <linearGradient id="artichoke" x2="1" y2="1">
+      <stop stop-color="#9abf6d"/>
+      <stop offset="1" stop-color="#2e634e"/>
+    </linearGradient>
+    <radialGradient id="lamp-glow">
+      <stop stop-color="#ffe2a1" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffd58b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="moon-glow">
+      <stop stop-color="#e9ecd3" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#e9ecd3" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="ripples" width="152" height="42" patternUnits="userSpaceOnUse">
+      <path d="M12 9h48m35 23h31" fill="none" stroke="#8cb7b2" stroke-width="2" stroke-linecap="round" opacity=".18"/>
+    </pattern>
+    <g id="pine">
+      <path d="M0 0v108" stroke="#616a48" stroke-width="7"/>
+      <path d="M0-38-23 18h12l-24 35h15l-29 39H49L20 53h15L11 18h12Z" fill="currentColor"/>
+      <path d="M0-27-12 13h12L-17 46H0L-25 79H0Z" fill="#d0d8a7" opacity=".13"/>
+    </g>
+    <g id="villa">
+      <path d="M0 8 24-7 54 8Z" fill="#6d5d53"/>
+      <path d="M5 8h44v31H5Z" fill="#8e9a86"/>
+      <path d="M14 17h7v10h-7m19-10h7v10h-7" fill="#f1cc84"/>
+      <path d="M27 25v14" stroke="#657a68" stroke-width="8"/>
+    </g>
+    <g id="cart">
+      <ellipse cx="188" cy="215" rx="177" ry="13" fill="#546855" opacity=".15"/>
+      <path d="M27 42v172m322-172v172" stroke="#725b41" stroke-width="9"/>
+      <rect x="19" y="51" width="338" height="45" rx="6" fill="#385d4c"/>
+      <path d="M17 2h342l18 40H-1Z" fill="#f7e8c3"/>
+      <path d="m17 2-18 40h63L74 2m57 0-6 40h63V2m57 0 6 40h63L302 2m57 0 18 40h-63L302 2" fill="#638b70"/>
+      <path d="M-1 42v12q32 15 63 0 32 15 63 0 32 15 63 0 32 15 63 0 32 15 63 0 32 15 63 0V42" fill="#f7e8c3"/>
+      <path d="M-1 42v12q32 15 63 0V42m63 0v12q32 15 63 0V42m63 0v12q32 15 63 0V42" fill="#638b70"/>
+      <rect x="16" y="147" width="344" height="64" rx="7" fill="#b68055"/>
+      <path d="M44 156v45m47-45v45m48-45v45m48-45v45m48-45v45m48-45v45m48-45v45" stroke="#9b6848" stroke-width="2"/>
+      <rect x="7" y="140" width="362" height="13" rx="5" fill="#f0d2a0"/>
+      <path d="M35 211v8m306-8v8" stroke="#654e39" stroke-width="12"/>
+      <ellipse cx="188" cy="125" rx="175" ry="65" fill="url(#lamp-glow)" opacity=".6"/>
+      <path d="M44 96v9m288-9v9" stroke="#506450" stroke-width="3"/>
+      <g fill="#fff0b9">
+        <circle cx="44" cy="108" r="5"/>
+        <circle cx="332" cy="108" r="5"/>
+      </g>
+    </g>
+    <g id="lamp">
+      <ellipse cy="-111" rx="86" ry="93" fill="url(#lamp-glow)"/>
+      <path d="M0 0v-131" stroke="#344b43" stroke-width="7"/>
+      <path d="M-18-126Q0-148 18-126Z" fill="#687b60"/>
+      <rect x="-10" y="-123" width="20" height="25" rx="4" fill="#ffe8af"/>
+      <path d="M-14-96h28M-8 0H8" stroke="#7f8c66" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <g id="swan">
+      <path d="M-31 8q27 22 55-1L5 1Z" fill="#faf2dd"/>
+      <path d="M14 3q-13-32 4-32 15 0 8 14" fill="none" stroke="#faf2dd" stroke-width="9" stroke-linecap="round"/>
+      <path d="m25-20 9 5-10 1" fill="#c78a53"/>
+      <path d="M-11 3q9-18 20 0" fill="#dfa988"/>
+      <path d="M-37 21h67" stroke="#d2e7df" stroke-width="2" opacity=".5"/>
+    </g>
+  </defs>
+
+  <path fill="url(#sky)" d="M0 0h1080v913H0Z"/>
+  <circle cx="910" cy="226" r="125" fill="url(#moon-glow)"/>
+  <circle cx="910" cy="226" r="32" fill="#f5e7bb"/>
+  <g fill="#b8bea0" opacity=".25">
+    <circle cx="901" cy="218" r="7"/>
+    <circle cx="918" cy="234" r="5"/>
+  </g>
+  <g fill="#f7e9bf" opacity=".75">
+    <circle cx="84" cy="94" r="2"/>
+    <circle cx="205" cy="42" r="1.5"/>
+    <circle cx="342" cy="69" r="2"/>
+    <circle cx="588" cy="37" r="1.5"/>
+    <circle cx="766" cy="63" r="2"/>
+    <circle cx="1008" cy="116" r="2"/>
+    <circle cx="55" cy="337" r="1.5"/>
+    <circle cx="226" cy="292" r="2"/>
+    <circle cx="722" cy="309" r="1.5"/>
+    <circle cx="1028" cy="312" r="2"/>
+    <path d="M126 191v10m-5-5h10M830 155v8m-4-4h8" stroke="#f7e9bf" stroke-width="1.5"/>
+  </g>
+  <g fill="#8ba4a0" opacity=".12">
+    <path d="M45 265q27-27 56-7 25-37 60-10 32-13 53 17Z"/>
+    <path d="M728 124q20-21 43-8 19-27 44-7 28-12 46 15Z"/>
+  </g>
+  <path d="M0 438Q115 356 234 396T471 393T713 361T1080 369V584H0Z" fill="#354f57"/>
+  <path d="M0 465Q117 413 237 443T463 420T697 402T1080 407V584H0Z" fill="#2b484c"/>
+  <path d="M0 515Q117 461 260 489T504 462T778 463T1080 441V584H0Z" fill="#233e40"/>
+  <g color="#1c3739" opacity=".8">
+    <use href="#pine" transform="translate(29 439) scale(.62)"/>
+    <use href="#pine" transform="translate(94 424) scale(.57)"/>
+    <use href="#pine" transform="translate(150 427) scale(.52)"/>
+    <use href="#pine" transform="translate(290 430) scale(.57)"/>
+    <use href="#pine" transform="translate(374 410) scale(.53)"/>
+    <use href="#pine" transform="translate(674 400) scale(.62)"/>
+    <use href="#pine" transform="translate(744 393) scale(.68)"/>
+    <use href="#pine" transform="translate(988 386) scale(.61)"/>
+    <use href="#pine" transform="translate(1051 393) scale(.7)"/>
+  </g>
+  <g>
+    <use href="#villa" transform="translate(63 507) scale(.85)"/>
+    <use href="#villa" transform="translate(137 489)"/>
+    <use href="#villa" transform="translate(211 505) scale(.85)"/>
+    <use href="#villa" transform="translate(324 483) scale(.9)"/>
+    <use href="#villa" transform="translate(729 498) scale(.8)"/>
+    <use href="#villa" transform="translate(981 510) scale(.9)"/>
+  </g>
+
+  <!-- Lâm Viên: hoa dã quỳ và nụ atisô nhìn từ bờ hồ đối diện. -->
+  <g transform="translate(529 523)">
+    <path d="M-131 20C-119-70-34-124 42-103 111-84 151-13 126 26Z" fill="url(#sunflower)" stroke="#bd963f" stroke-width="3"/>
+    <path d="M-105 12C-93-42-48-81 3-94M-55 22C-24-10 9-48 21-100M-3 26C37 5 59-41 55-91M55 27C91 0 95-36 83-71" fill="none" stroke="#a28743" stroke-width="5"/>
+    <ellipse cx="-36" cy="-35" rx="77" ry="25" transform="rotate(-27 -36 -35)" fill="#477a82" stroke="#d6ba65" stroke-width="8"/>
+    <path d="m-100-8 114-54" stroke="#96bfc0" stroke-width="4"/>
+    <path d="M-140 26h278v17h-278Z" fill="#d1c1a0"/>
+  </g>
+  <g transform="translate(890 504) rotate(-12)">
+    <path d="M-49 39C-80-11-28-63 9-111 20-64 85-10 53 39Z" fill="url(#artichoke)" stroke="#4b7651" stroke-width="3"/>
+    <path d="M-48 22Q-1 19 41-15M-49-3Q-1-2 25-43M-32-38Q-1-28 15-72" fill="none" stroke="#c0d387" stroke-width="13"/>
+    <path d="M-39 37Q21 25 49 2M-41-18Q-4-10 35-35M-18-58Q4-46 21-66" fill="none" stroke="#3e7656" stroke-width="9"/>
+    <path d="M-25 42v16h57V39" fill="#54786c"/>
+  </g>
+  <path d="M0 557Q227 542 437 563T794 559T1080 553V587H0Z" fill="#3e594a"/>
+  <path d="M0 575Q260 566 540 578T1080 570" fill="none" stroke="#9f9c6a" stroke-width="6"/>
+  <g fill="#304c3d">
+    <ellipse cx="282" cy="544" rx="25" ry="39"/>
+    <ellipse cx="311" cy="552" rx="19" ry="30"/>
+    <ellipse cx="679" cy="546" rx="27" ry="35"/>
+    <ellipse cx="966" cy="550" rx="21" ry="31"/>
+  </g>
+
+  <path d="M0 584Q260 578 540 586T1080 580V916H0Z" fill="url(#lake)"/>
+  <path d="m465 594 113 3 44 131-198 1Z" fill="#f3d38b" opacity=".22"/>
+  <path d="m870 591 44-2 25 109-93 6Z" fill="#9ec291" opacity=".2"/>
+  <g fill="#f3d197">
+    <circle cx="58" cy="575" r="3"/>
+    <circle cx="174" cy="573" r="3"/>
+    <circle cx="290" cy="573" r="3"/>
+    <circle cx="406" cy="577" r="3"/>
+    <circle cx="522" cy="579" r="3"/>
+    <circle cx="638" cy="581" r="3"/>
+    <circle cx="754" cy="580" r="3"/>
+    <circle cx="870" cy="576" r="3"/>
+    <circle cx="986" cy="574" r="3"/>
+  </g>
+  <path fill="url(#ripples)" d="M0 589h1080v320H0Z"/>
+  <g fill="none" stroke="#8fafad" stroke-linecap="round">
+    <path d="M87 631h105m59-16h39m410 10h100m126 35h98M463 690h81m-107 24h37m71 49h83M410 827h50m89 26h91" opacity=".4" stroke-width="3"/>
+    <path d="M122 694h106m373-30h41m201 68h100M416 792h63m79 18h75m-90 65h94" opacity=".2" stroke-width="5"/>
+  </g>
+  <use href="#swan" transform="translate(263 651) scale(.8)"/>
+  <use href="#swan" transform="translate(670 716) scale(.65)"/>
+  <path d="M0 890Q540 877 1080 890V1920H0Z" fill="url(#terrace)"/>
+  <path d="M0 900Q540 888 1080 900" fill="none" stroke="#7a7b5a" stroke-width="15"/>
+  <path d="M0 894Q540 881 1080 894" fill="none" stroke="#b4ab7b" stroke-width="5"/>
+  <g stroke="#536e64" stroke-width="6" fill="none">
+    <path d="M0 851Q540 838 1080 851M0 878Q540 865 1080 878"/>
+    <path d="M18 850v48m116-51v49m116-51v48m116-50v49m116-51v49m116-49v49m116-48v49m116-47v49m116-47v49m116-46v48"/>
+  </g>
+  <ellipse cx="230" cy="1004" rx="330" ry="210" fill="url(#lamp-glow)" opacity=".5"/>
+  <ellipse cx="850" cy="1004" rx="330" ry="210" fill="url(#lamp-glow)" opacity=".5"/>
+  <path d="M504 1008h72l39 806H465Z" fill="#d7c99f" opacity=".15"/>
+  <g stroke="#ae9778" stroke-width="2" opacity=".2" fill="none">
+    <path d="M0 1063h1080M0 1220h1080M0 1377h1080M0 1534h1080M0 1691h1080M0 1848h1080"/>
+    <path d="m30 912-90 1008M210 912l-65 1008M390 912l-25 1008M690 912l25 1008M870 912l65 1008M1050 912l90 1008"/>
+  </g>
+
+  <use href="#lamp" transform="translate(437 902)"/>
+  <use href="#lamp" transform="translate(643 902)"/>
+  <g color="#1b3935">
+    <use href="#pine" transform="translate(8 646) scale(1.45)"/>
+    <use href="#pine" transform="translate(1074 626) scale(1.65)"/>
+  </g>
+  <g transform="translate(46 708) scale(.89)">
+    <use href="#cart"/>
+    <g font-family="Segoe UI, Arial, sans-serif" text-anchor="middle" fill="#fff0cd">
+      <text x="188" y="81" font-size="23" font-weight="700">SỮA HẠT NHÀ NẤU</text>
+    </g>
+    <rect x="64" y="109" width="79" height="30" rx="7" fill="#b7c1ad"/>
+    <ellipse cx="104" cy="108" rx="40" ry="8" fill="#e8e9d9"/>
+    <path d="M90 99h28m-14-7v7" stroke="#849680" stroke-width="6" stroke-linecap="round"/>
+    <g fill="#f8edcd" stroke="#c8c7a3" stroke-width="2">
+      <path d="m192 115 4 24h21l4-24Z"/>
+      <path d="m239 115 4 24h21l4-24Z"/>
+      <path d="m286 115 4 24h21l4-24Z"/>
+    </g>
+    <path d="m209 105-4 25m51-25-4 25m51-25-4 25" stroke="#6c9976" stroke-width="3"/>
+    <text x="188" y="187" font-family="Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#fff0d3">Đậu nành · Đậu xanh · Mè đen</text>
+  </g>
+  <g transform="translate(699 708) scale(.89)">
+    <use href="#cart"/>
+    <text x="188" y="81" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700" text-anchor="middle" fill="#fff0cd">BÁNH &amp; MÓN LẠNH</text>
+    <rect x="43" y="119" width="166" height="21" rx="6" fill="#4e5145"/>
+    <ellipse cx="127" cy="121" rx="67" ry="16" fill="#c29052"/>
+    <ellipse cx="127" cy="117" rx="64" ry="15" fill="#f0cb7d"/>
+    <path d="m88 115 18 5m18-12 13 6m13 7 15-7m-47 11 9-5" stroke="#698b52" stroke-width="5" stroke-linecap="round"/>
+    <g fill="#f4e7c4">
+      <path d="M249 117h25v22h-25Z"/>
+      <path d="M300 117h25v22h-25Z"/>
+    </g>
+    <path d="M249 118h25m26 0h25" stroke="#dca169" stroke-width="7"/>
+    <text x="188" y="187" font-family="Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#fff0d3">Bánh nướng · Panna cotta · Yogurt</text>
+  </g>
+  <g fill="#4f775f">
+    <path d="M2 968h27v47H2Zm1049 0h29v47h-29Z"/>
+    <ellipse cx="10" cy="961" rx="25" ry="18"/>
+    <ellipse cx="1072" cy="961" rx="25" ry="18"/>
+  </g>
+</svg>

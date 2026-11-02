@@ -1,10 +1,10 @@
 # Soy & Crunch
 
-An interactive virtual soy milk and grilled rice paper shop for TikTok LIVE. Built with ASP.NET Core .NET 10, SignalR, React, TypeScript, and Canvas 2D.
+An interactive virtual milk, dessert, and street snack shop for TikTok LIVE. Built with ASP.NET Core .NET 10, SignalR, React, TypeScript, and Canvas 2D.
 
 ## Scope
 
-One local streaming PC, one live session, 24 seats, two menu items, simulated viewer events, and a portrait overlay. Session state lives in memory. Restarting the backend or resetting the session clears it. This is an entertainment overlay, not a food ordering or payment system.
+One local streaming PC, one live session, 18 tables with 36 seats, 28 menu items, simulated viewer events, and a portrait overlay. Session state lives in memory. Restarting the backend or resetting the session clears it. This is an entertainment overlay, not a food ordering or payment system.
 
 ## Documentation
 
@@ -14,6 +14,7 @@ One local streaming PC, one live session, 24 seats, two menu items, simulated vi
 - [Implementation and verification](docs/04-implementation.md)
 - [TikTok connector verification](docs/05-connector-verification.md)
 - [Validation results and remaining checks](docs/06-validation.md)
+- [Menu and chat commands](docs/07-menu.md)
 
 ## Run locally
 
@@ -39,7 +40,11 @@ npm --prefix frontend run dev
 - API health: <http://127.0.0.1:5186/api/health>
 - SignalR: `/hubs/live`, proxied by Vite during development.
 
-Click **Mời 12 khách** to simulate activity. Enter a guest name and click either menu item; each guest may have one active order. `!sua` / `!sữa` orders soy milk; `!banh` / `!bánh` orders grilled rice paper. **Dừng bot** stops new bot events; existing simulated guests remain until reset or idle expiry.
+Click **Mời 12 khách** to simulate activity. Enter a guest name, choose a menu group, and click a dish; each guest may have one active order. Viewers can type Vietnamese dish names directly: `sữa đậu nành`, `sữa đậu xanh`, `panna cotta`, `yogurt đá`, or `bánh tráng nướng`. No `!` is required. Matching ignores case, accents, and whitespace; the entire comment must match a dish name or alias. Existing commands such as `!sua` and `!banh` still work. The overlay shows up to four items from one category per page, with the category name and its page count. It finishes the milk pages, then cold desserts, then snacks; pages change every eight seconds. **Dừng menu** pauses it. Reduced motion starts with the menu paused. **Dừng bot** stops new bot events; existing simulated guests remain until reset or idle expiry.
+
+The backend and frontend share [menu.json](menu.json). It contains names, commands, aliases, preparation times, and artwork styles; prices are not displayed. See the [complete menu](docs/07-menu.md).
+
+The lakeside overlay illustrates Xuan Huong Lake in Da Lat at night, with moonlight, warm lamps, pine-covered hills, and Lam Vien Square's wild sunflower and artichoke landmarks. Two compact food carts frame the lake view; the lit terrace keeps all 18 tables and 36 seats, with a center aisle and space above the first row for the menu. The original SVG background is bundled locally.
 
 All simulated guests are marked as such. Enter a public TikTok username and click **Kết nối** after starting a LIVE. The initial C# connector verification returned `LiveNotFoundException` for `@one61secondz`; actual live events remain unverified. A failed connection never enables a fake “connected” state.
 

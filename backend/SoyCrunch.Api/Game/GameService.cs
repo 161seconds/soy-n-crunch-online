@@ -4,7 +4,7 @@ namespace SoyCrunch.Api.Game;
 
 public sealed class GameService(TimeProvider clock)
 {
-    public const int Capacity = 24;
+    public const int Capacity = 36;
     private readonly object gate = new();
     private readonly Dictionary<string, Guest> guests = [];
     private readonly Dictionary<string, DateTimeOffset> lastOrders = [];
@@ -67,7 +67,7 @@ public sealed class GameService(TimeProvider clock)
                 return Result("accepted", "Đã nhận quà");
             }
 
-            if (guest is null) return Result("full", "Quán đủ 24 khách, mời chờ một chút");
+            if (guest is null) return Result("full", $"Quán đủ {Capacity} khách, mời chờ một chút");
             guest = guest with { LastSeenAt = now };
             if (input.Type == "join")
             {
@@ -79,20 +79,15 @@ public sealed class GameService(TimeProvider clock)
             var text = Clean(input.Text ?? "", 120);
             guests[guest.Id] = guest with { Text = text, TextUntil = now.AddSeconds(5) };
             Changed();
-            var item = text.Trim().ToLowerInvariant().Normalize() switch
-            {
-                "!sua" or "!sữa" => "milk",
-                "!banh" or "!bánh" => "rice-paper",
-                _ => null
-            };
+            var item = MenuCatalog.Match(text);
             if (item is null) return Result("accepted", "Đã nhận bình luận");
             if (!settings.AcceptingOrders) return Result("closed", "Quán đang ngưng nhận món");
             if (orders.Any(o => o.GuestId == guest.Id)) return Result("busy", "Khách đang có một món");
             if (lastOrders.TryGetValue(guest.Id, out var last) && now - last < TimeSpan.FromSeconds(8))
                 return Result("cooldown", "Chờ đủ 8 giây giữa hai lần gọi món");
-            orders.Add(new(Guid.NewGuid().ToString("N"), guest.Id, item, "queued", now));
+            orders.Add(new(Guid.NewGuid().ToString("N"), guest.Id, item.Id, "queued", now));
             lastOrders[guest.Id] = now;
-            AddFeed("order", $"{guest.Name} gọi {ItemName(item)}");
+            AddFeed("order", $"{guest.Name} gọi {item.Name}");
             Changed();
             return Result("accepted", "Bếp đã nhận món");
         }
@@ -124,7 +119,7 @@ public sealed class GameService(TimeProvider clock)
                 var next = orders.FirstOrDefault(o => o.State == "queued");
                 if (next is not null)
                 {
-                    orders[orders.IndexOf(next)] = next with { State = "cooking", Until = now.AddSeconds(next.Item == "milk" ? 2 : 4) };
+                    orders[orders.IndexOf(next)] = next with { State = "cooking", Until = now.AddSeconds(MenuCatalog.Get(next.Item).PrepSeconds) };
                     Changed();
                 }
             }
@@ -143,7 +138,8 @@ public sealed class GameService(TimeProvider clock)
                     var g = demoGuests[Random.Shared.Next(demoGuests.Length)];
                     var kind = Random.Shared.Next(10);
                     Handle(new(Guid.NewGuid().ToString("N"), g.Id, g.Name,
-                        kind < 7 ? "chat" : "like", kind % 2 == 0 ? "!sua" : "!banh", LikeCount: Random.Shared.Next(1, 6), Demo: true));
+                        kind < 7 ? "chat" : "like", MenuCatalog.Items[Random.Shared.Next(MenuCatalog.Items.Count)].Name,
+                        LikeCount: Random.Shared.Next(1, 6), Demo: true));
                 }
             }
             return SnapshotUnsafe();
@@ -199,7 +195,7 @@ public sealed class GameService(TimeProvider clock)
             Changed();
         }
     }
-    public static string ItemName(string item) => item == "milk" ? "sữa đậu nành" : "bánh tráng nướng";
+    public static string ItemName(string item) => MenuCatalog.Get(item).Name;
     private EventResult Result(string outcome, string message) => new(outcome, message, SnapshotUnsafe());
     private void Changed() => revision = Math.Max(revision + 1, clock.GetUtcNow().ToUnixTimeMilliseconds());
     private void AddFeed(string kind, string text)

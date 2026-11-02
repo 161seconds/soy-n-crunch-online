@@ -1,0 +1,282 @@
+[
+  {
+    "id": "milk",
+    "name": "Sữa đậu nành",
+    "category": "Sữa hạt",
+    "command": "!sua",
+    "aliases": ["!sữa", "!daunanh", "!sữa đậu nành"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#eee2b5"
+  },
+  {
+    "id": "soy-mint",
+    "name": "Đậu nành bạc hà",
+    "category": "Sữa hạt",
+    "command": "!bacha",
+    "aliases": ["!daunanhbacha"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#a8d8bd"
+  },
+  {
+    "id": "soy-milo",
+    "name": "Đậu nành Milo",
+    "category": "Sữa hạt",
+    "command": "!milo",
+    "aliases": ["!daunanhmilo"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#b68b68"
+  },
+  {
+    "id": "soy-chia",
+    "name": "Đậu nành hạt chia",
+    "category": "Sữa hạt",
+    "command": "!hatchia",
+    "aliases": ["!chia"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#d8d1b8"
+  },
+  {
+    "id": "rice-milk",
+    "name": "Sữa gạo",
+    "category": "Sữa hạt",
+    "command": "!gao",
+    "aliases": ["!suagao", "!sữa gạo"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#e7dbc5"
+  },
+  {
+    "id": "rice-mint",
+    "name": "Gạo bạc hà",
+    "category": "Sữa hạt",
+    "command": "!gaobacha",
+    "aliases": [],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#b8ddcb"
+  },
+  {
+    "id": "rice-milo",
+    "name": "Gạo Milo",
+    "category": "Sữa hạt",
+    "command": "!gaomilo",
+    "aliases": [],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#bc9879"
+  },
+  {
+    "id": "rice-matcha",
+    "name": "Gạo matcha",
+    "category": "Sữa hạt",
+    "command": "!gaomatcha",
+    "aliases": ["!matcha"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#9eb47a"
+  },
+  {
+    "id": "rice-macchiato",
+    "name": "Gạo macchiato trân châu",
+    "category": "Sữa hạt",
+    "command": "!gaomacchiato",
+    "aliases": ["!macchiato"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#c6ac84"
+  },
+  {
+    "id": "corn-milk",
+    "name": "Sữa bắp",
+    "category": "Sữa hạt",
+    "command": "!bap",
+    "aliases": ["!suabap", "!sữa bắp"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#f0d477"
+  },
+  {
+    "id": "black-sesame",
+    "name": "Sữa mè đen",
+    "category": "Sữa hạt",
+    "command": "!meden",
+    "aliases": ["!suameden", "!sữa mè đen"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#9b9695"
+  },
+  {
+    "id": "mung-bean",
+    "name": "Sữa đậu xanh",
+    "category": "Sữa hạt",
+    "command": "!dauxanh",
+    "aliases": ["!suadauxanh", "!sữa đậu xanh"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#c6d492"
+  },
+  {
+    "id": "peanut-milk",
+    "name": "Sữa đậu phộng",
+    "category": "Sữa hạt",
+    "command": "!dauphong",
+    "aliases": ["!suadauphong", "!sữa đậu phộng"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#ddbc92"
+  },
+  {
+    "id": "mixed-milk",
+    "name": "Sữa thập cẩm",
+    "category": "Sữa hạt",
+    "command": "!thapcam",
+    "aliases": ["!suathapcam"],
+    "prepSeconds": 2,
+    "visual": "cup",
+    "color": "#c6ba92"
+  },
+  {
+    "id": "panna-passion",
+    "name": "Panna cotta chanh dây",
+    "category": "Món lạnh",
+    "command": "!panna",
+    "aliases": ["!pana", "!panacotta", "!pannacotta", "!pannachanhday"],
+    "prepSeconds": 1,
+    "visual": "pudding",
+    "color": "#e4b33f"
+  },
+  {
+    "id": "panna-kiwi",
+    "name": "Panna cotta kiwi",
+    "category": "Món lạnh",
+    "command": "!pannakiwi",
+    "aliases": [],
+    "prepSeconds": 1,
+    "visual": "pudding",
+    "color": "#8fb653"
+  },
+  {
+    "id": "panna-strawberry",
+    "name": "Panna cotta dâu",
+    "category": "Món lạnh",
+    "command": "!pannadau",
+    "aliases": [],
+    "prepSeconds": 1,
+    "visual": "pudding",
+    "color": "#ce6f79"
+  },
+  {
+    "id": "panna-peach",
+    "name": "Panna cotta đào",
+    "category": "Món lạnh",
+    "command": "!pannadao",
+    "aliases": [],
+    "prepSeconds": 1,
+    "visual": "pudding",
+    "color": "#edab75"
+  },
+  {
+    "id": "yogurt",
+    "name": "Yogurt hũ",
+    "category": "Món lạnh",
+    "command": "!yogurt",
+    "aliases": ["!yaourt", "!suachua"],
+    "prepSeconds": 1,
+    "visual": "jar",
+    "color": "#e9e6d9"
+  },
+  {
+    "id": "iced-yogurt",
+    "name": "Yogurt đá",
+    "category": "Món lạnh",
+    "command": "!yogurtda",
+    "aliases": ["!yaourtda", "!suachuada"],
+    "prepSeconds": 1,
+    "visual": "iced-cup",
+    "color": "#e8ebe2"
+  },
+  {
+    "id": "coconut-yogurt",
+    "name": "Yogurt thạch dừa",
+    "category": "Món lạnh",
+    "command": "!yogurtdua",
+    "aliases": ["!yaourtdua", "!thachdua"],
+    "prepSeconds": 1,
+    "visual": "iced-cup",
+    "color": "#dce8cc"
+  },
+  {
+    "id": "flan",
+    "name": "Bánh flan caramel",
+    "category": "Món lạnh",
+    "command": "!flan",
+    "aliases": ["!banhflan"],
+    "prepSeconds": 1,
+    "visual": "pudding",
+    "color": "#a86938"
+  },
+  {
+    "id": "rice-paper",
+    "name": "Bánh tráng nướng",
+    "category": "Bánh & ăn vặt",
+    "command": "!banh",
+    "aliases": ["!bánh", "!banhtrang", "!bánh tráng nướng"],
+    "prepSeconds": 4,
+    "visual": "rice-paper",
+    "color": "#edc66f"
+  },
+  {
+    "id": "sesame-bun",
+    "name": "Bánh tiêu",
+    "category": "Bánh & ăn vặt",
+    "command": "!tieu",
+    "aliases": ["!banhtieu"],
+    "prepSeconds": 3,
+    "visual": "pastry",
+    "color": "#d6a55d"
+  },
+  {
+    "id": "cruller",
+    "name": "Quẩy nóng",
+    "category": "Bánh & ăn vặt",
+    "command": "!quay",
+    "aliases": ["!quẩy"],
+    "prepSeconds": 3,
+    "visual": "cruller",
+    "color": "#d5a05a"
+  },
+  {
+    "id": "drumstick-bread",
+    "name": "Bánh đùi gà",
+    "category": "Bánh & ăn vặt",
+    "command": "!duiga",
+    "aliases": ["!banhduiga"],
+    "prepSeconds": 3,
+    "visual": "drumstick",
+    "color": "#c98c48"
+  },
+  {
+    "id": "cheese-toast",
+    "name": "Bánh mì phô mai",
+    "category": "Bánh & ăn vặt",
+    "command": "!phomai",
+    "aliases": ["!banhmiphomai"],
+    "prepSeconds": 3,
+    "visual": "toast",
+    "color": "#f0cb68"
+  },
+  {
+    "id": "fries",
+    "name": "Khoai tây chiên",
+    "category": "Bánh & ăn vặt",
+    "command": "!khoaitay",
+    "aliases": ["!khoai", "!khoaichien"],
+    "prepSeconds": 4,
+    "visual": "fries",
+    "color": "#e7bd55"
+  }
+]

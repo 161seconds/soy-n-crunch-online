@@ -1,17 +1,26 @@
 export const WIDTH = 1080;
 export const HEIGHT = 1920;
+export const TABLE_COUNT = 18;
+export const CAPACITY = TABLE_COUNT * 2;
+
+export function tableAt(index: number) {
+  const row = Math.floor(index / 4),
+    columns = Math.min(4, TABLE_COUNT - row * 4);
+  return {
+    x: WIDTH / 2 + ((index % 4) - (columns - 1) / 2) * 260,
+    y: 1150 + row * 154,
+    scale: 0.66 + row * 0.02,
+  };
+}
 
 export function seatAt(index: number) {
-  if (!Number.isInteger(index) || index < 0 || index >= 24)
-    throw new RangeError("Seat must be between 0 and 23");
-  const table = Math.floor(index / 2),
-    row = Math.floor(table / 3),
-    col = table % 3;
-  const scale = 0.76 + row * 0.075;
+  if (!Number.isInteger(index) || index < 0 || index >= CAPACITY)
+    throw new RangeError(`Seat must be between 0 and ${CAPACITY - 1}`);
+  const table = tableAt(Math.floor(index / 2));
   return {
-    x: 180 + col * 360 + (index % 2 === 0 ? -92 : 92) * scale,
-    y: 1170 + row * 190 + 52 * scale,
-    scale,
+    x: table.x + (index % 2 === 0 ? -92 : 92) * table.scale,
+    y: table.y + 52 * table.scale,
+    scale: table.scale,
   };
 }
 

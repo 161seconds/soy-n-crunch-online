@@ -1,4 +1,5 @@
 using SoyCrunch.Api.Game;
+using System.Text;
 using Xunit;
 
 namespace SoyCrunch.Tests;
@@ -11,24 +12,93 @@ public sealed class GameTests
         new(Guid.NewGuid().ToString("N"), id, "Alice", "chat", text);
 
     [Fact]
-    public void CapacityIs24WithUniqueSeatsAndExistingGuestsCanStillChat()
+    public void CapacityIs36WithUniqueSeatsAndExistingGuestsCanStillChat()
     {
         var game = Game();
-        for (var i = 0; i < 24; i++) game.Handle(Chat("xin chào", $"user-{i}"));
+        for (var i = 0; i < 36; i++)
+            Assert.Equal("accepted", game.Handle(Chat("xin chào", $"user-{i}")).Outcome);
         Assert.Equal("full", game.Handle(Chat(id: "extra")).Outcome);
-        Assert.Equal(24, game.Snapshot().Guests.Select(g => g.Seat).Distinct().Count());
+        Assert.Equal(36, game.Snapshot().Guests.Select(g => g.Seat).Distinct().Count());
         Assert.Equal("accepted", game.Handle(Chat("hello", "user-0")).Outcome);
     }
 
+    public static IEnumerable<object[]> MenuCommands() => MenuCatalog.Items.SelectMany(item =>
+        item.Aliases.Prepend(item.Command).Prepend(item.Name)
+            .SelectMany(text => new[] { text, text.TrimStart('!') }).Distinct()
+            .Select(text => new object[] { text, item.Id }));
+    public static IEnumerable<object[]> MenuItems() => MenuCatalog.Items.Select(item => new object[] { item.Id });
+
     [Theory]
-    [InlineData("!sua", "milk")]
-    [InlineData(" !SỮA ", "milk")]
-    [InlineData("!banh", "rice-paper")]
-    [InlineData("!bánh", "rice-paper")]
-    public void ExactCommandsCreateTheCorrectOrder(string text, string item)
+    [MemberData(nameof(MenuCommands))]
+    public void DishNamesAndCommandsCreateTheCorrectOrder(string text, string item)
+    {
+        var game = Game(); game.Handle(Chat($" {text.ToUpperInvariant().Normalize(NormalizationForm.FormD)} "));
+        Assert.Equal(item, Assert.Single(game.Snapshot().Orders).Item);
+    }
+
+    [Theory]
+    [InlineData("sua dau nanh", "milk")]
+    [InlineData("đậu xanh", "mung-bean")]
+    [InlineData("sua dau xanh", "mung-bean")]
+    [InlineData("sữa \t đậu\n xanh", "mung-bean")]
+    [InlineData("panna cotta", "panna-passion")]
+    [InlineData("pana cotta", "panna-passion")]
+    [InlineData("yogurt da", "iced-yogurt")]
+    [InlineData("sữa chua đá", "iced-yogurt")]
+    [InlineData("banh trang nuong", "rice-paper")]
+    [InlineData("!SỮA ĐẬU XANH", "mung-bean")]
+    public void VietnameseNamesAcceptAccentsSpacingAndOptionalBang(string text, string item)
     {
         var game = Game(); game.Handle(Chat(text));
         Assert.Equal(item, Assert.Single(game.Snapshot().Orders).Item);
+    }
+
+    [Fact]
+    public void MenuContains28DistinctItemsWithoutTofuOrAmbiguousCommands()
+    {
+        Assert.Equal(28, MenuCatalog.Items.Count);
+        Assert.Equal(28, MenuCatalog.Items.Select(item => item.Id).Distinct().Count());
+        var commands = MenuCatalog.Items.SelectMany(item => item.Aliases.Prepend(item.Command)).ToArray();
+        Assert.Equal(commands.Length, commands.Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.DoesNotContain(MenuCatalog.Items, item => item.Name.Contains("tàu hủ", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Theory]
+    [InlineData("!tauhu")]
+    [InlineData("!tàu hủ")]
+    [InlineData("muốn gọi !dauxanh")]
+    [InlineData("!panna thêm đá")]
+    [InlineData("tàu hủ")]
+    [InlineData("mình thích sữa đậu xanh")]
+    [InlineData("panna cotta thêm đá")]
+    [InlineData("sữa đậu xanh và bánh tráng nướng")]
+    [InlineData("!!sua")]
+    [InlineData("!")]
+    [InlineData("")]
+    public void RemovedItemsAndPartialCommandsNeverCreateOrders(string text)
+    {
+        var game = Game(); game.Handle(Chat(text));
+        Assert.Empty(game.Snapshot().Orders);
+    }
+
+    [Theory]
+    [MemberData(nameof(MenuItems))]
+    public void EveryMenuItemCompletesItsOwnPreparationAndConsumption(string id)
+    {
+        var item = MenuCatalog.Get(id);
+        var game = Game(); game.Handle(Chat(item.Name));
+        game.Tick();
+        clock.Advance(item.PrepSeconds - 1);
+        Assert.Equal("cooking", Assert.Single(game.Tick().Orders).State);
+        clock.Advance(1);
+        Assert.Equal("serving", Assert.Single(game.Tick().Orders).State);
+        clock.Advance(1);
+        Assert.Equal("consuming", Assert.Single(game.Tick().Orders).State);
+        clock.Advance(6);
+        var state = game.Tick();
+        Assert.Empty(state.Orders);
+        Assert.Equal(1, state.Stats.Served);
+        Assert.Contains(state.Feed, entry => entry.Kind == "served" && entry.Text.Contains(item.Name));
     }
 
     [Fact]

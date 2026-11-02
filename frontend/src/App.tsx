@@ -2,7 +2,16 @@ import { useEffect, useState } from "react";
 import { post, useSession } from "./api";
 import { useShopAudio } from "./audio";
 import Scene from "./Scene";
-import { itemName, orderName, type LiveEvent, type Session } from "./types";
+import { CAPACITY } from "./layout";
+import {
+  itemName,
+  menu,
+  menuGroups,
+  menuItem,
+  orderName,
+  type LiveEvent,
+  type Session,
+} from "./types";
 
 function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, string> = {
@@ -43,11 +52,15 @@ export default function App() {
   const overlay = location.pathname === "/overlay";
   const [username, setUsername] = useState("one61secondz");
   const [name, setName] = useState("Bảo Ngọc");
-  const [text, setText] = useState("Cho mình một ly sữa nhé!");
+  const [text, setText] = useState("sữa đậu xanh");
   const [message, setMessage] = useState("");
   const [working, setWorking] = useState(false);
   const [title, setTitle] = useState("Sữa & Giòn");
   const [showGuests, setShowGuests] = useState(false);
+  const [menuGroup, setMenuGroup] = useState(menuGroups[0]);
+  const [menuPaused, setMenuPaused] = useState(
+    () => matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -133,12 +146,28 @@ export default function App() {
       {audio.enabled ? "Tắt tiếng" : "Bật tiếng"}
     </button>
   );
+  const menuButton = (
+    <button
+      className="button soft"
+      aria-pressed={menuPaused}
+      onClick={() => setMenuPaused(!menuPaused)}
+    >
+      <Icon name="bowl" /> {menuPaused ? "Chạy menu" : "Dừng menu"}
+    </button>
+  );
 
   if (overlay)
     return (
       <main className="overlay-page">
-        <Scene session={session} connection={connection} />
-        <div className="overlay-audio">{audioButton}</div>
+        <Scene
+          session={session}
+          connection={connection}
+          menuPaused={menuPaused}
+        />
+        <div className="overlay-audio">
+          {menuButton}
+          {audioButton}
+        </div>
         {message && (
           <div className="toast" role="status">
             {message}
@@ -175,9 +204,9 @@ export default function App() {
           <span className="mini-label">HÔM NAY BÁN GÌ?</span>
           <Icon name="cup" size={36} />
           <strong>
-            Một ly sữa ấm.
+            Sữa thơm. Bánh giòn.
             <br />
-            Một chiếc bánh giòn.
+            Thêm chút ngọt mát.
           </strong>
           <p>
             Khách gọi bằng bình luận.
@@ -185,8 +214,10 @@ export default function App() {
             Quán vui nhờ mọi người.
           </p>
           <div className="menu-chips">
-            <code>!sua</code>
-            <code>!banh</code>
+            <code>sữa đậu nành</code>
+            <code>đậu xanh</code>
+            <code>panna cotta</code>
+            <code>bánh tráng nướng</code>
           </div>
         </div>
         <div className="sidebar-footer">
@@ -228,7 +259,7 @@ export default function App() {
               icon: "people",
               label: "KHÁCH TRONG QUÁN",
               value: session.guests.length,
-              suffix: "/ 24",
+              suffix: `/ ${CAPACITY}`,
               hint: "Chỗ ngồi trong phiên",
             },
             {
@@ -284,13 +315,20 @@ export default function App() {
               </span>
             </div>
             <div className="preview-frame">
-              <Scene session={session} connection={connection} />
+              <Scene
+                session={session}
+                connection={connection}
+                menuPaused={menuPaused}
+              />
             </div>
             <div className="preview-footer">
               <span>
                 <span className="dot green" /> Phiên {uptime}
               </span>
-              {audioButton}
+              <div className="preview-actions">
+                {menuButton}
+                {audioButton}
+              </div>
             </div>
           </section>
 
@@ -384,29 +422,46 @@ export default function App() {
                 onChange={(event) => setName(event.target.value)}
                 maxLength={24}
               />
-              <div className="food-buttons">
-                <button
-                  disabled={disabled}
-                  onClick={() => simulate("chat", { text: "!sua" })}
+              <div className="menu-toolbar">
+                <h3>
+                  Thực đơn <small>{menu.length} món</small>
+                </h3>
+                <select
+                  aria-label="Nhóm món"
+                  value={menuGroup}
+                  onChange={(event) => setMenuGroup(event.target.value)}
                 >
-                  <span className="food-drawing milk-drawing">
-                    <i />
-                  </span>
-                  <strong>Sữa đậu nành</strong>
-                  <small>Gửi lệnh !sua</small>
-                  <span className="food-plus">+</span>
-                </button>
-                <button
-                  disabled={disabled}
-                  onClick={() => simulate("chat", { text: "!banh" })}
-                >
-                  <span className="food-drawing rice-drawing">
-                    <i />
-                  </span>
-                  <strong>Bánh tráng nướng</strong>
-                  <small>Gửi lệnh !banh</small>
-                  <span className="food-plus">+</span>
-                </button>
+                  {menuGroups.map((group) => (
+                    <option key={group}>{group}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="food-buttons" role="group" aria-label={menuGroup}>
+                {menu
+                  .filter((item) => item.category === menuGroup)
+                  .map((item) => (
+                    <button
+                      key={item.id}
+                      disabled={disabled}
+                      onClick={() => simulate("chat", { text: item.name })}
+                    >
+                      <span
+                        className="menu-dish"
+                        style={{ backgroundColor: item.color }}
+                        aria-hidden="true"
+                      >
+                        <Icon
+                          name={item.category === "Sữa hạt" ? "cup" : "bowl"}
+                          size={25}
+                        />
+                      </span>
+                      <strong>{item.name}</strong>
+                      <small>Nhấn để gọi món</small>
+                      <span className="food-plus" aria-hidden="true">
+                        +
+                      </span>
+                    </button>
+                  ))}
               </div>
               <form
                 onSubmit={(event) => {
@@ -421,6 +476,7 @@ export default function App() {
                     value={text}
                     onChange={(event) => setText(event.target.value)}
                     maxLength={120}
+                    aria-describedby="comment-hint"
                     required
                   />
                   <button
@@ -431,6 +487,9 @@ export default function App() {
                     <Icon name="arrow" />
                   </button>
                 </div>
+                <p className="field-note" id="comment-hint">
+                  Gõ tên món để gọi, có dấu hoặc không dấu. Không cần dấu !.
+                </p>
               </form>
               <div className="quick-actions">
                 <button
@@ -486,7 +545,20 @@ export default function App() {
                 {session.orders.length ? (
                   session.orders.slice(0, 5).map((order) => (
                     <div className="order-row" key={order.id}>
-                      <span className={`order-dot ${order.item}`} />
+                      <span
+                        className="order-dot"
+                        style={{ backgroundColor: menuItem(order.item)?.color }}
+                        aria-hidden="true"
+                      >
+                        <Icon
+                          name={
+                            menuItem(order.item)?.category === "Sữa hạt"
+                              ? "cup"
+                              : "bowl"
+                          }
+                          size={18}
+                        />
+                      </span>
                       <div>
                         <strong>{itemName(order.item)}</strong>
                         <small>

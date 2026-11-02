@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 const base = process.env.SOYCRUNCH_API ?? "http://127.0.0.1:5186";
@@ -17,6 +18,14 @@ async function request(path, body) {
   return response.json();
 }
 const before = await request("/api/session");
+const menu = JSON.parse(
+  await readFile(new URL("../../menu.json", import.meta.url), "utf8"),
+);
+assert.deepEqual(
+  await request("/api/menu"),
+  menu,
+  "Published menu must match the shared catalog",
+);
 assert.ok(
   before.connector.status !== "connected" &&
     before.guests.every((guest) => guest.demo),
@@ -90,7 +99,7 @@ try {
     () => firstState?.stats.served === 1 && secondState?.stats.served === 1,
     13_000,
   );
-  for (let i = 1; i < 24; i++)
+  for (let i = 1; i < 36; i++)
     await request("/api/events", event("join", { viewerId: `smoke-${i}` }));
   assert.equal(
     (
@@ -102,11 +111,30 @@ try {
     "full",
   );
   await until(
-    () => firstState?.guests.length === 24 && secondState?.guests.length === 24,
+    () => firstState?.guests.length === 36 && secondState?.guests.length === 36,
   );
-  assert.equal(new Set(firstState.guests.map((guest) => guest.seat)).size, 24);
+  assert.equal(new Set(firstState.guests.map((guest) => guest.seat)).size, 36);
+  await request("/api/session/reset", {});
+  for (const item of menu) {
+    const result = await request(
+      "/api/events",
+      event("chat", { viewerId: `menu-${item.id}`, text: item.name }),
+    );
+    assert.equal(result.outcome, "accepted");
+    assert.ok(
+      result.session.orders.some(
+        (order) =>
+          order.guestId === `menu-${item.id}` && order.item === item.id,
+      ),
+    );
+  }
+  await until(
+    () =>
+      firstState?.orders.length === menu.length &&
+      secondState?.orders.length === menu.length,
+  );
   console.log(
-    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, gift streak, replay protection, 24-seat capacity.",
+    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, gift streak, replay protection, 36-seat capacity, all 28 Vietnamese dish names without !.",
   );
 } finally {
   await first.stop();

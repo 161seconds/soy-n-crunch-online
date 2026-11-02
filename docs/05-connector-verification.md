@@ -50,7 +50,7 @@ Kết quả probe trực tiếp trước tích hợp:
 
    Exit 0: kết nối được phòng; exit 2: chưa kết nối. Sau kết nối, chương trình quan sát 30 giây, in trạng thái và bộ đếm từng loại. Exit 0 không đồng nghĩa đã nhận đủ chat/like/gift.
 
-5. Người kiểm thử tự tạo bình luận `!sua`, `!banh` và lượt tim trên TikTok; xác nhận khách/món/thống kê thay đổi ở overlay. Kiểm tra quà bằng sự kiện được người dùng cho phép; ứng dụng không gửi bình luận/quà thay người dùng.
+5. Người kiểm thử tự tạo bình luận `sữa đậu xanh`, `bánh tráng nướng` và lượt tim trên TikTok; xác nhận khách/món/thống kê thay đổi ở overlay. Lệnh cũ như `!sua` vẫn dùng được. Kiểm tra quà bằng sự kiện được người dùng cho phép; ứng dụng không gửi bình luận/quà thay người dùng.
 6. Ngắt kết nối hoặc mất mạng phải hiện trạng thái tương ứng; mở lại overlay phải khôi phục snapshot.
 
 ## Giới hạn

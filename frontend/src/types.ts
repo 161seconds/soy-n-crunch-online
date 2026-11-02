@@ -1,3 +1,19 @@
+import menuData from "../../menu.json";
+
+export const menu = menuData;
+export const menuGroups = [...new Set(menu.map((item) => item.category))];
+export const menuPages = menuGroups.flatMap((category) => {
+  const items = menu.filter((item) => item.category === category);
+  const total = Math.ceil(items.length / 4);
+  return Array.from({ length: total }, (_, index) => ({
+    category,
+    page: index + 1,
+    total,
+    items: items.slice(index * 4, index * 4 + 4),
+  }));
+});
+export const menuItem = (id: string) => menu.find((item) => item.id === id);
+
 export interface Guest {
   id: string;
   name: string;
@@ -14,7 +30,7 @@ export interface Guest {
 export interface FoodOrder {
   id: string;
   guestId: string;
-  item: "milk" | "rice-paper";
+  item: string;
   state: "queued" | "cooking" | "serving" | "consuming";
   queuedAt: string;
   until: string | null;
@@ -53,7 +69,7 @@ export interface LiveEvent {
   demo?: boolean;
 }
 export const itemName = (item: string) =>
-  item === "milk" ? "Sữa đậu nành" : "Bánh tráng nướng";
+  menuItem(item)?.name ?? "Món không xác định";
 export const orderName: Record<FoodOrder["state"], string> = {
   queued: "Chờ bếp",
   cooking: "Đang làm",

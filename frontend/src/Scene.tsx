@@ -1,6 +1,15 @@
-import { useEffect, useRef } from "react";
-import { HEIGHT, seatAt, walkPosition, WIDTH } from "./layout";
+import { useEffect, useRef, useState } from "react";
+import {
+  CAPACITY,
+  HEIGHT,
+  seatAt,
+  tableAt,
+  TABLE_COUNT,
+  walkPosition,
+  WIDTH,
+} from "./layout";
 import type { FoodOrder, Guest, Session } from "./types";
+import { menu, menuItem, menuPages } from "./types";
 
 type Context = CanvasRenderingContext2D;
 const palette = [
@@ -54,11 +63,11 @@ function label(
   c.fillStyle = color;
   c.fillText(value, x, y);
 }
-function cup(c: Context, x: number, y: number, s = 1) {
+function cup(c: Context, x: number, y: number, s = 1, color = "#f4edd1") {
   c.save();
   c.translate(x, y);
   c.scale(s, s);
-  box(c, -18, -45, 36, 48, 7, "#f4edd1");
+  box(c, -18, -45, 36, 48, 7, color);
   box(c, -18, -45, 36, 8, 4, "#fffbea");
   c.strokeStyle = "#598367";
   c.lineWidth = 5;
@@ -99,6 +108,75 @@ function heart(c: Context, x: number, y: number, s: number) {
   c.bezierCurveTo(-32, -10, -20, -34, 0, -19);
   c.bezierCurveTo(20, -34, 32, -10, 0, 7);
   c.fill();
+  c.restore();
+}
+export function drawDish(
+  c: Context,
+  id: string,
+  x: number,
+  y: number,
+  s: number,
+) {
+  const item = menuItem(id);
+  if (!item) return;
+  c.save();
+  c.translate(x, y);
+  c.scale(s, s);
+  switch (item.visual) {
+    case "cup":
+      cup(c, 0, 0, 1, item.color);
+      break;
+    case "iced-cup":
+      cup(c, 0, 0, 1, item.color);
+      for (let i = 0; i < 3; i++)
+        box(c, -13 + i * 9, -38 + (i % 2) * 8, 9, 9, 2, "#ffffffb3");
+      break;
+    case "jar":
+      box(c, -22, -42, 44, 45, 10, item.color);
+      box(c, -24, -47, 48, 10, 4, "#8cae9b");
+      box(c, -15, -27, 30, 15, 4, "#fffaf0");
+      break;
+    case "pudding":
+      oval(c, 0, 5, 46, 12, "#f8f3e5");
+      box(c, -27, -35, 54, 36, 13, "#fff0cf");
+      oval(c, 0, -32, 27, 9, item.color);
+      oval(c, 9, -37, 7, 5, item.color);
+      break;
+    case "rice-paper":
+      ricePaper(c, 0, 0, 0.82);
+      break;
+    case "pastry":
+      oval(c, 0, -16, 38, 27, item.color);
+      for (let i = 0; i < 9; i++)
+        oval(
+          c,
+          -24 + (i % 5) * 11,
+          -28 + Math.floor(i / 5) * 14,
+          2,
+          1,
+          "#fff0c6",
+        );
+      break;
+    case "cruller":
+      box(c, -28, -48, 24, 60, 10, item.color);
+      box(c, -3, -48, 24, 60, 10, item.color);
+      break;
+    case "drumstick":
+      box(c, -35, -15, 37, 17, 8, item.color);
+      oval(c, 9, -21, 28, 25, item.color);
+      break;
+    case "toast":
+      box(c, -33, -48, 66, 54, 10, "#ae733f");
+      box(c, -27, -42, 54, 42, 7, item.color);
+      for (let i = 0; i < 3; i++)
+        box(c, -21 + i * 16, -36, 4, 29, 2, "#b1874a");
+      break;
+    case "fries":
+      for (let i = 0; i < 5; i++)
+        box(c, -23 + i * 10, -47 + (i % 2) * 7, 8, 48, 2, item.color);
+      box(c, -28, -16, 56, 30, 5, "#b76b4d");
+      break;
+  }
   c.restore();
 }
 function person(
@@ -172,8 +250,7 @@ function person(
   c.arc(0, -111, 7, 0.2, Math.PI - 0.2);
   c.stroke();
   if (consuming) {
-    if (order.item === "milk") cup(c, 43, -46 - eatingMotion, 0.58);
-    else ricePaper(c, 45, -48 - eatingMotion, 0.48);
+    drawDish(c, order.item, 43, -46 - eatingMotion, 0.58);
   } else if (order) {
     box(c, 35, -99, 42, 27, 13, "#fff5dc");
     label(
@@ -220,103 +297,22 @@ function person(
 
 function draw(c: Context, session: Session, now: number, reduced: boolean) {
   const t = reduced ? 0 : now / 1000;
-  const sky = c.createLinearGradient(0, 0, 0, HEIGHT);
-  sky.addColorStop(0, "#223c39");
-  sky.addColorStop(0.52, "#61715a");
-  sky.addColorStop(1, "#c7a780");
-  c.fillStyle = sky;
-  c.fillRect(0, 0, WIDTH, HEIGHT);
-  for (let i = 0; i < 35; i++)
-    oval(
-      c,
-      (i * 173 + 80) % 1080,
-      (i * 61) % 440,
-      i % 3 === 0 ? 2 : 1,
-      1.4,
-      "#e8d6a480",
-    );
-  c.fillStyle = "#2a4840";
-  c.fillRect(0, 340, 150, 430);
-  c.fillRect(920, 290, 160, 490);
-  for (let i = 0; i < 7; i++) {
-    box(c, 25, 385 + i * 46, 45, 23, 2, "#e4b76e30");
-    box(c, 980, 335 + i * 48, 43, 24, 2, "#e4b76e30");
-  }
-  c.strokeStyle = "#1a302b";
-  c.lineWidth = 5;
-  c.beginPath();
-  c.moveTo(-20, 380);
-  c.quadraticCurveTo(540, 540, 1100, 380);
-  c.stroke();
-  for (let i = 0; i < 8; i++) {
-    const x = 50 + i * 140,
-      y = 397 + Math.sin((i / 7) * Math.PI) * 66;
-    const glow = c.createRadialGradient(x, y + 10, 0, x, y + 10, 85);
-    glow.addColorStop(0, "#f4ce7c55");
-    glow.addColorStop(1, "#f4ce7c00");
-    c.fillStyle = glow;
-    c.fillRect(x - 85, y - 75, 170, 170);
-    box(c, x - 11, y, 22, 30, 8, "#f3d08b");
-  }
-  box(c, 50, 522, 980, 379, 18, "#d8bf91");
-  box(c, 74, 550, 445, 213, 10, "#45634d");
-  box(c, 561, 550, 445, 213, 10, "#45634d");
-  label(c, "SỮA ĐẬU NÀNH", 295, 595, 35, "#f9ebcb", 700);
-  label(c, "Đậu thơm · Sữa nóng", 295, 643, 24, "#d1d5b7", 400);
-  label(c, "BÁNH TRÁNG NƯỚNG", 784, 595, 32, "#f9ebcb", 700);
-  label(c, "Giòn rụm · Nóng hổi", 784, 643, 24, "#d1d5b7", 400);
-  for (let i = 0; i < 10; i++) {
-    box(c, 40 + i * 100, 480, 100, 64, 16, i % 2 ? "#f4e4b9" : "#66845c");
-  }
-  box(c, 31, 791, 1018, 110, 13, "#9d6241");
-  box(c, 27, 774, 1026, 31, 10, "#edcc92");
-  for (let i = 0; i < 15; i++) {
-    c.fillStyle = "#743e2826";
-    c.fillRect(65 + i * 67, 815, 3, 63);
-  }
-  box(c, 142, 680, 155, 92, 17, "#d9dbc9");
-  oval(c, 219, 683, 77, 14, "#f0eddd");
-  box(c, 184, 654, 68, 13, 6, "#b6b9a8");
-  box(c, 209, 642, 20, 20, 6, "#6e7964");
-  for (let i = 0; i < 3; i++) cup(c, 360 + i * 53, 768, 0.8);
-  box(c, 641, 705, 292, 69, 15, "#423f38");
-  oval(c, 785, 722, 119, 26, "#b66036");
-  for (let i = 0; i < 6; i++) box(c, 680 + i * 41, 713, 5, 26, 1, "#463c32");
-  ricePaper(c, 786, 714, 1.55);
+  c.clearRect(0, 0, WIDTH, HEIGHT);
   const cooking = session.orders.some((o) => o.state === "cooking");
   for (let i = 0; i < (cooking ? 9 : 5); i++) {
     const age = (((t * 0.35 + i * 0.17) % 1) + 1) % 1;
     c.globalAlpha = (1 - age) * 0.25;
     oval(
       c,
-      770 + Math.sin(t + i) * 32,
-      690 - age * 110,
-      8 + age * 17,
-      12 + age * 19,
+      812 + Math.sin(t + i) * 12,
+      809 - age * 65,
+      5 + age * 10,
+      8 + age * 12,
       "#fff0d9",
     );
   }
   c.globalAlpha = 1;
-  const floor = c.createLinearGradient(0, 920, 0, 1920);
-  floor.addColorStop(0, "#d6bc91");
-  floor.addColorStop(1, "#e8d0a6");
-  c.fillStyle = floor;
-  c.fillRect(0, 917, 1080, 1003);
-  c.strokeStyle = "#9a80522b";
-  c.lineWidth = 2;
-  for (let i = 0; i < 8; i++) {
-    c.beginPath();
-    c.moveTo(i * 180 - 180, 920);
-    c.lineTo(i * 210 - 240, 1920);
-    c.stroke();
-  }
-  for (let i = 0; i < 8; i++) {
-    c.beginPath();
-    c.moveTo(0, 960 + i * 143);
-    c.lineTo(1080, 960 + i * 143);
-    c.stroke();
-  }
-  for (let i = 0; i < 24; i++) {
+  for (let i = 0; i < CAPACITY; i++) {
     const seat = seatAt(i);
     box(
       c,
@@ -329,10 +325,8 @@ function draw(c: Context, session: Session, now: number, reduced: boolean) {
     );
     oval(c, seat.x, seat.y - 3, 31 * seat.scale, 11 * seat.scale, "#ae7c50");
   }
-  for (let i = 0; i < 12; i++) {
-    const x = 180 + (i % 3) * 360,
-      y = 1170 + Math.floor(i / 3) * 190,
-      s = 0.76 + Math.floor(i / 3) * 0.075;
+  for (let i = 0; i < TABLE_COUNT; i++) {
+    const { x, y, scale: s } = tableAt(i);
     oval(c, x, y + 48, 101 * s, 22 * s, "#755c2b20");
     box(c, x - 8 * s, y, 16 * s, 56 * s, 5, "#68563d");
     oval(c, x, y + 5, 87 * s, 37 * s, "#af7b47");
@@ -352,16 +346,31 @@ function draw(c: Context, session: Session, now: number, reduced: boolean) {
       reduced,
     );
   box(c, 38, 1827, 1004, 58, 20, "#48634c");
-  label(c, "MỘT CHÚT ẤM BỤNG, MỘT TỐI BÌNH YÊN", 540, 1857, 24, "#fff1cb", 500);
+  label(c, "SỮA ẤM BÊN HỒ · BÁNH GIÒN ĐÀ LẠT", 540, 1857, 24, "#fff1cb", 500);
 }
 
 export default function Scene({
   session,
   connection,
+  menuPaused,
 }: {
   session: Session;
   connection: string;
+  menuPaused: boolean;
 }) {
+  const pages = menuPages.length;
+  const [menuPage, setMenuPage] = useState(
+    () => Math.floor(Date.now() / 8000) % pages,
+  );
+  const currentMenu = menuPages[menuPage];
+  useEffect(() => {
+    if (menuPaused) return;
+    const timer = setInterval(
+      () => setMenuPage(Math.floor(Date.now() / 8000) % pages),
+      1000,
+    );
+    return () => clearInterval(timer);
+  }, [menuPaused, pages]);
   const canvas = useRef<HTMLCanvasElement>(null);
   const state = useRef(session),
     offset = useRef(Date.parse(session.serverTime) - Date.now());
@@ -393,16 +402,19 @@ export default function Scene({
         width={WIDTH}
         height={HEIGHT}
         role="img"
-        aria-label={`Quán ${session.settings.title}, ${session.guests.length} khách. Nhân vật đang ăn bánh tráng nướng và uống sữa đậu nành.`}
+        aria-label={`Quán ${session.settings.title} bên Hồ Xuân Hương, Đà Lạt, ${TABLE_COUNT} bàn, ${CAPACITY} chỗ, ${session.guests.length} khách, ${menu.length} món sữa hạt, bánh và món lạnh.`}
       />
       <div className="scene-brand">
-        <span>QUÁN NHỎ · NIỀM VUI TO</span>
+        <span>HỒ XUÂN HƯƠNG · ĐÀ LẠT</span>
         <h2>{session.settings.title}</h2>
-        <p>Sữa đậu nành & bánh tráng nướng</p>
+        <p>Sữa hạt · Bánh giòn · Ngọt mát</p>
       </div>
       <div className="scene-stats">
         <span>
-          <b>{session.guests.length}/24</b> khách ghé
+          <b>
+            {session.guests.length}/{CAPACITY}
+          </b>{" "}
+          khách ghé
         </span>
         <span>
           <b>{session.stats.served}</b> món đã dùng
@@ -411,14 +423,24 @@ export default function Scene({
           <b>{session.stats.likes}</b> lượt tim
         </span>
       </div>
-      <div className="scene-menu">
-        <span>
-          <b>!sua</b> một ly ấm áp
-        </span>
-        <i />{" "}
-        <span>
-          <b>!banh</b> một miếng giòn tan
-        </span>
+      <div
+        className="scene-menu"
+        aria-label={`Thực đơn ${currentMenu.category}`}
+        aria-live="off"
+      >
+        <div className="scene-menu-title">
+          {currentMenu.category.toLocaleUpperCase("vi-VN")} · GÕ TÊN MÓN ĐỂ GỌI{" "}
+          <span>
+            {currentMenu.page}/{currentMenu.total}
+          </span>
+        </div>
+        <div className="scene-menu-items">
+          {currentMenu.items.map((item) => (
+            <span key={item.id}>
+              <b>{item.name}</b>
+            </span>
+          ))}
+        </div>
       </div>
       <div
         className={`scene-badge ${connection !== "connected" ? "disconnected" : ""}`}

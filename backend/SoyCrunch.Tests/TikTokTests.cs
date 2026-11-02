@@ -9,18 +9,21 @@ namespace SoyCrunch.Tests;
 
 public sealed class TikTokTests
 {
-    [Fact]
-    public void ActualConnectorDecodesProtobufChatAndLikeIntoTheGame()
+    [Theory]
+    [InlineData("!sua", "milk")]
+    [InlineData("sữa đậu xanh", "mung-bean")]
+    [InlineData("banh trang nuong", "rice-paper")]
+    public void ActualConnectorDecodesProtobufChatAndLikeIntoTheGame(string text, string item)
     {
         var game = new GameService(TimeProvider.System);
         var client = new FixtureClient();
         TikTokEvents.Attach(client, input => game.Handle(input));
-        client.Push("WebcastChatMessage", new ChatWire { Header = new() { Id = 100 }, User = new(), Text = "!sua" });
+        client.Push("WebcastChatMessage", new ChatWire { Header = new() { Id = 100 }, User = new(), Text = text });
         client.Push("WebcastLikeMessage", new LikeWire { Header = new() { Id = 101 }, User = new(), Count = 7 });
         var guest = Assert.Single(game.Snapshot().Guests);
         Assert.Equal("tiktok:12345", guest.Id);
         Assert.Equal("Khách fixture", guest.Name);
-        Assert.Equal("milk", Assert.Single(game.Snapshot().Orders).Item);
+        Assert.Equal(item, Assert.Single(game.Snapshot().Orders).Item);
         Assert.Equal(7, game.Snapshot().Stats.Likes);
     }
 

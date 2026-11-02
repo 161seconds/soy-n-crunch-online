@@ -40,6 +40,7 @@ if (Directory.Exists(app.Environment.WebRootPath))
 }
 app.MapGet("/api/health", () => new { status = "ok", application = "Soy & Crunch" });
 app.MapGet("/api/session", (GameService game) => game.Snapshot());
+app.MapGet("/api/menu", () => MenuCatalog.Items);
 app.MapPost("/api/events", (IncomingEvent input, GameService game) => game.Handle(input));
 app.MapPost("/api/session/settings", (ShopSettings input, GameService game) => game.UpdateSettings(input));
 app.MapPost("/api/session/reset", (GameService game) => game.Reset());

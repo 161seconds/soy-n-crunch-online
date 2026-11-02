@@ -12,6 +12,16 @@ public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>
     public ApiTests(WebApplicationFactory<Program> app) => client = app.CreateClient(new() { BaseAddress = new("http://localhost:5186") });
 
     [Fact]
+    public async Task MenuEndpointReturnsTheSharedCatalog()
+    {
+        var menu = await client.GetFromJsonAsync<MenuItem[]>("/api/menu");
+        Assert.NotNull(menu);
+        Assert.Equal(MenuCatalog.Items.Select(item => item.Id), menu.Select(item => item.Id));
+        Assert.Contains(menu, item => item.Id == "mung-bean" && item.Command == "!dauxanh");
+        Assert.Contains(menu, item => item.Id == "iced-yogurt" && item.Command == "!yogurtda");
+    }
+
+    [Fact]
     public async Task ApiProcessesAnEventAndReturnsASnapshot()
     {
         var response = await client.PostAsJsonAsync("/api/events", new IncomingEvent(Guid.NewGuid().ToString("N"), "api-alice", "Alice", "chat", "!sua"));

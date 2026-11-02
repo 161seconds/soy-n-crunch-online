@@ -13,12 +13,15 @@
 
 Server là nguồn trạng thái chuẩn. Mọi mutation đi qua `GameService` với khóa bảo vệ; client chỉ gửi lệnh, không tự cộng điểm hoặc xác nhận phục vụ. Snapshot có revision tăng đơn điệu; client bỏ snapshot cũ để tránh HTTP và SignalR tới sai thứ tự. Tick 250 ms chỉ phát khi có thay đổi; client nội suy hoạt ảnh.
 
+`menu.json` tại root là danh mục chung của .NET và React, gồm ID ổn định, tên, nhóm, lệnh/alias, thời gian chuẩn bị, kiểu hình và màu. MSBuild sao chép vào output/publish; Vite nhập trực tiếp JSON. Menu không có giá; `FoodOrder.item` chứa ID trong danh mục.
+
 ## HTTP và SignalR
 
 | Đường dẫn | Công dụng |
 |---|---|
 | `GET /api/health` | Tình trạng tiến trình |
 | `GET /api/session` | Snapshot hiện tại |
+| `GET /api/menu` | Danh mục 28 món và lệnh gọi |
 | `POST /api/events` | Nhận sự kiện chuẩn hóa từ bộ mô phỏng/adapter |
 | `POST /api/session/settings` | Đổi tên quán, bật/tắt nhận món |
 | `POST /api/session/reset` | Xóa khách, đơn, thống kê và nhật ký trong RAM |
@@ -37,7 +40,7 @@ Màn điều khiển ở `/`; overlay ở `/overlay`. Khi phát triển, Vite pr
   "viewerId": "demo-minh",
   "name": "Minh",
   "type": "chat",
-  "text": "!sua",
+  "text": "sữa đậu nành",
   "demo": true
 }
 ```
