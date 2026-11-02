@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/node_modules/
+frontend/dist/
+backend/SoyCrunch.Api/wwwroot/
+artifacts/
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+.vs/
+.DS_Store

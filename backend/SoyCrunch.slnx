@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SoyCrunch.Api/SoyCrunch.Api.csproj" />
+  <Project Path="SoyCrunch.Tests/SoyCrunch.Tests.csproj" />
+</Solution>

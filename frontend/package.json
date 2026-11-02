@@ -1,0 +1,27 @@
+{
+  "name": "soy-crunch-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5176 --strictPort",
+    "build": "tsc -b && vite build",
+    "test": "vitest run",
+    "test:integration": "node scripts/smoke.mjs",
+    "test:connector": "node scripts/connector.mjs"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^10.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.0",
+    "vitest": "^4.0.0"
+  }
+}

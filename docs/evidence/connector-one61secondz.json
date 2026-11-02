@@ -1,0 +1,12 @@
+{
+  "library": "TikTokLive_Sharp 1.2.3",
+  "observedAt": "2026-11-02T17:37:18.690Z",
+  "status": "error",
+  "username": "one61secondz",
+  "message": "Chưa kết nối được @one61secondz: LiveStream for HostID could not be found. Is the Host online?",
+  "lastEventAt": null,
+  "chatEvents": 0,
+  "likeEvents": 0,
+  "giftEvents": 0,
+  "joinEvents": 0
+}
