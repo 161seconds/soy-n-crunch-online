@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { post, useSession } from "./api";
 import { useShopAudio } from "./audio";
+import MusicPanel from "./MusicPanel";
 import Scene from "./Scene";
 import { CAPACITY } from "./layout";
 import {
@@ -752,6 +753,7 @@ export default function App() {
                 onChange={(event) => audio.setVoice(event.target.checked)}
               />
             </label>
+            <MusicPanel />
             <div className="reset-row">
               <p>Bắt đầu lại sẽ xóa dữ liệu phiên này.</p>
               <button

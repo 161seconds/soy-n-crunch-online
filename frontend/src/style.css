@@ -816,6 +816,71 @@ code {
 .switch-row input:checked:before {
   transform: translateX(14px);
 }
+.music-panel {
+  min-width: 0;
+  margin: 22px 0 0;
+  padding: 16px 0 0;
+  border: 0;
+  border-top: 1px solid #efeee3;
+}
+.music-panel legend {
+  padding: 0 8px 0 0;
+  color: #526447;
+  font-size: 13px;
+  font-weight: 600;
+}
+.music-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-bottom: 18px;
+}
+.music-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  cursor: pointer;
+}
+.music-options input {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  accent-color: #60845a;
+}
+.music-file {
+  margin-top: 14px;
+}
+.music-file input {
+  margin-top: 8px;
+  font-size: 11px;
+}
+.music-track {
+  color: #71775e;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  margin: 0 0 12px;
+}
+.music-panel audio {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+}
+.music-youtube {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  aspect-ratio: 16 / 9;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 9px;
+}
+.music-error {
+  color: #99492e;
+  font-size: 12px;
+  line-height: 1.6;
+}
 .reset-row {
   margin-top: 16px;
   border-top: 1px solid #efeee3;
