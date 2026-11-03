@@ -9,7 +9,7 @@ import {
   WIDTH,
 } from "./layout";
 import type { FoodOrder, Guest, Session } from "./types";
-import { menu, menuItem, menuPages } from "./types";
+import { giftRules, menu, menuItem, menuPages } from "./types";
 
 type Context = CanvasRenderingContext2D;
 const palette = [
@@ -110,6 +110,123 @@ function heart(c: Context, x: number, y: number, s: number) {
   c.fill();
   c.restore();
 }
+
+export function activeGifts(feed: Session["feed"], now: number) {
+  // shortcut: show three recent gifts; add a queue if busy streams need every animation.
+  return feed.filter((entry) => {
+    const age = now - Date.parse(entry.at);
+    return (entry.kind === "gift" || entry.kind === "milestone") && age >= 0 && age < 7000;
+  }).slice(-3);
+}
+
+export function drawGiftEffects(c: Context, feed: Session["feed"], now: number, reduced: boolean) {
+  if (reduced) return;
+  const colors = ["#ffe09a", "#ff9fb4", "#a5edcb", "#afd0ff"];
+  for (const gift of activeGifts(feed, now)) {
+    const age = (now - Date.parse(gift.at)) / 1000;
+    const seed = Array.from(gift.id).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const density = Math.min(18, 7 + Math.floor(Math.log2(Math.max(1, gift.repeatCount ?? 1))) * 2);
+    c.save();
+    c.globalAlpha = Math.min(1, (7 - age) / 1.2);
+    if (!gift.effect || gift.effect === "hearts") {
+      for (let i = 0; i < density; i++)
+        heart(c, 100 + i * (880 / Math.max(1, density - 1)) + Math.sin(age * 2 + i) * 12,
+          820 - age * 40 - (i % 3) * 55, 0.55 + (i % 3) * 0.1);
+    } else if (gift.effect === "flowers") {
+      for (let i = 0; i < density; i++) {
+        const x = 90 + ((seed + i * 137) % 900) + Math.sin(age + i) * 25;
+        const y = 440 + ((age * 45 + i * 53) % 390);
+        for (let petal = 0; petal < 5; petal++) {
+          const angle = petal * Math.PI * 2 / 5 + age * 0.4;
+          oval(c, x + Math.cos(angle) * 8, y + Math.sin(angle) * 8, 7, 6, colors[1]);
+        }
+        oval(c, x, y, 4, 4, colors[0]);
+      }
+    } else if (gift.effect === "treat") {
+      for (let i = 0; i < 3; i++) {
+        const x = 210 + i * 330;
+        const y = 760 - age * 18 + Math.sin(age * 2 + i) * 12;
+        drawDish(c, "iced-yogurt", x, y, 1);
+        heart(c, x + 40, y - 65, 0.6);
+      }
+    } else if (gift.effect === "rush") {
+      label(c, "BẾP ×2", 540, 665, 36, colors[0]);
+      for (let i = 0; i < density; i++) {
+        const rise = (age * 90 + i * 43) % 150;
+        oval(c, 435 + ((seed + i * 31) % 210), 810 - rise,
+          4 + (i % 3), 9, i % 2 ? "#ffb171" : colors[0]);
+      }
+    } else if (gift.effect === "swan") {
+      for (let i = 0; i < 2; i++) {
+        c.save();
+        c.translate(110 + age * 100 + i * 135, 655 + i * 55);
+        oval(c, -5, 26, 62, 7, "#cde9e52b");
+        oval(c, 0, 0, 43, 20, "#fffae8");
+        oval(c, -8, -5, 28, 12, "#dfdfd2");
+        c.strokeStyle = "#fffae8";
+        c.lineWidth = 13;
+        c.beginPath();
+        c.moveTo(24, -3);
+        c.bezierCurveTo(62, -43, 15, -64, 38, -70);
+        c.stroke();
+        oval(c, 40, -70, 12, 10, "#fffae8");
+        oval(c, 46, -73, 2, 2, "#384a42");
+        box(c, 50, -71, 15, 6, 2, "#e8ad6c");
+        c.restore();
+      }
+    } else if (gift.effect === "dance") {
+      for (let i = 0; i < density; i++)
+        label(c, i % 2 ? "♪" : "♫", 100 + ((seed + i * 137) % 880),
+          780 - ((age * 50 + i * 37) % 320), 32 + (i % 3) * 9, colors[i % colors.length]);
+    } else if (gift.effect === "stars") {
+      for (let i = 0; i < 6; i++) {
+        const phase = ((age + i * 0.5) % 3) / 3;
+        const x = 110 + i * 132 + phase * 130, y = 445 + (i % 2) * 85 + phase * 110;
+        c.strokeStyle = colors[i % colors.length];
+        c.lineWidth = 3;
+        c.beginPath();
+        c.moveTo(x - 70, y - 45);
+        c.lineTo(x, y);
+        c.stroke();
+        oval(c, x, y, 5, 5, colors[0]);
+      }
+    } else {
+      for (let burst = 0; burst < (gift.effect === "festival" ? 6 : 3); burst++) {
+        const life = age - burst * 0.7;
+        if (life < 0 || life > 2) continue;
+        const x = 180 + ((seed + burst * 283) % 720), y = 540 + (burst % 2) * 85;
+        c.globalAlpha = 1;
+        if (life < 0.35) {
+          c.strokeStyle = colors[burst % colors.length];
+          c.lineWidth = 3;
+          c.beginPath();
+          c.moveTo(x, y + (1 - life / 0.35) * 220);
+          c.lineTo(x, y + (1 - life / 0.35) * 220 + 25);
+          c.stroke();
+        } else {
+          const t = life - 0.35;
+          c.globalAlpha = Math.max(0, 1 - t / 1.65);
+          for (let i = 0; i < 28; i++) {
+            const angle = (i / 28) * Math.PI * 2 + seed;
+            const distance = 125 * Math.sqrt(t) * (0.7 + (i % 3) * 0.15);
+            oval(c, x + Math.cos(angle) * distance,
+              y + Math.sin(angle) * distance + t * t * 35, 3, 3, colors[i % colors.length]);
+          }
+        }
+      }
+      if (gift.effect === "festival") {
+        c.globalAlpha = Math.min(1, (7 - age) / 1.2);
+        for (let i = 0; i < 20; i++) {
+          c.fillStyle = colors[i % colors.length];
+          c.fillRect(60 + ((seed + i * 137) % 960) + Math.sin(age * 2 + i) * 12,
+            410 + ((age * 80 + i * 37) % 470), 5, 11);
+        }
+      }
+    }
+    c.restore();
+  }
+}
+
 export function drawDish(
   c: Context,
   id: string,
@@ -185,6 +302,7 @@ function person(
   order: FoodOrder | undefined,
   now: number,
   reduced: boolean,
+  celebrating: boolean,
 ) {
   const seat = seatAt(guest.seat),
     arrival = (now - Date.parse(guest.joinedAt)) / 1700;
@@ -198,6 +316,7 @@ function person(
   const consuming = order?.state === "consuming";
   const bob = reduced
     ? 0
+    : celebrating ? -Math.abs(Math.sin(phase * 5)) * 18
     : Math.sin(phase * (walking ? 10 : 2)) * (walking ? 4 : 1.4);
   c.save();
   c.translate(p.x, p.y + bob);
@@ -224,6 +343,11 @@ function person(
     c.stroke();
   }
   box(c, -30, -92, 60, 70, 18, palette[hash % palette.length]);
+  const giftAge = guest.reactionAt ? now - Date.parse(guest.reactionAt) : -1;
+  if (guest.reaction === "gift" && giftAge >= 0 && giftAge < 7000) {
+    oval(c, 0, -119, 42, 46, "#ffe09a55");
+    label(c, "★", 46, -154, 29, "#ffe09a");
+  }
   const eatingMotion =
     consuming && !reduced ? (Math.sin(phase * 4) + 1) * 12 : 0;
   c.strokeStyle = "#eac0a0";
@@ -298,6 +422,9 @@ function person(
 function draw(c: Context, session: Session, now: number, reduced: boolean) {
   const t = reduced ? 0 : now / 1000;
   c.clearRect(0, 0, WIDTH, HEIGHT);
+  const gifts = activeGifts(session.feed, now);
+  const celebrating = gifts.some((gift) => gift.effect === "festival" || gift.effect === "dance");
+  drawGiftEffects(c, gifts, now, reduced);
   const cooking = session.orders.some((o) => o.state === "cooking");
   for (let i = 0; i < (cooking ? 9 : 5); i++) {
     const age = (((t * 0.35 + i * 0.17) % 1) + 1) % 1;
@@ -342,9 +469,8 @@ function draw(c: Context, session: Session, now: number, reduced: boolean) {
       session.orders.find((o) => o.guestId === guest.id),
       now,
       reduced,
+      celebrating,
     );
-  box(c, 38, 1827, 1004, 58, 20, "#48634c");
-  label(c, "SỮA ẤM BÊN HỒ · BÁNH GIÒN ĐÀ LẠT", 540, 1857, 24, "#fff1cb", 500);
 }
 
 export default function Scene({
@@ -391,7 +517,10 @@ export default function Scene({
     frame = requestAnimationFrame(render);
     return () => cancelAnimationFrame(frame);
   }, []);
-  const gift = session.feed.filter((entry) => entry.kind === "gift").at(-1);
+  const gift = activeGifts(session.feed, Date.now() + offset.current).at(-1);
+  const nextGoal = (Math.floor(session.stats.diamonds / 100) + 1) * 100;
+  const boostSeconds = session.kitchenBoostUntil
+    ? Math.max(0, Math.ceil((Date.parse(session.kitchenBoostUntil) - Date.now() - offset.current) / 1000)) : 0;
   const simulated = session.demoRunning || session.guests.some((g) => g.demo);
   return (
     <div className="scene">
@@ -458,9 +587,19 @@ export default function Scene({
       {!session.settings.acceptingOrders && (
         <div className="scene-closed">Quán tạm ngưng nhận món mới</div>
       )}
+      <div className="scene-goal">
+        <span>MỐC QUÀ {nextGoal} ĐIỂM · {session.stats.diamonds % 100}/100</span>
+        <span>{boostSeconds > 0 ? `Bếp ×2 · còn ${boostSeconds}s` : "Đủ mốc: lễ hội + bếp ×2"}</span>
+        <progress max={100} value={session.stats.diamonds % 100}
+          aria-label={`Tiến trình đến mốc ${nextGoal} điểm quà`} />
+      </div>
       {gift && (
-        <div className="gift-toast" key={gift.id}>
-          {gift.text}
+        <div className="gift-toast" key={gift.id} role="status">
+          {gift.demo && <small className="gift-demo">MÔ PHỎNG</small>}
+          <strong>{giftRules.find((rule) => rule.effect === gift.effect)?.title ?? "TRÁI TIM GỬI BẠN"}
+            {(gift.repeatCount ?? 1) > 1 && <span className="gift-combo">×{gift.repeatCount}</span>}
+          </strong>
+          <span>{gift.text}</span>
         </div>
       )}
     </div>

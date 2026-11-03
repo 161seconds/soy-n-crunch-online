@@ -22,6 +22,15 @@ public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task GiftEndpointReturnsEverySharedRule()
+    {
+        var rules = await client.GetFromJsonAsync<GiftRule[]>("/api/gifts");
+        Assert.NotNull(rules);
+        Assert.Equal(GiftCatalog.Items.Select(rule => rule.Effect), rules.Select(rule => rule.Effect));
+        Assert.All(rules, rule => Assert.False(string.IsNullOrWhiteSpace(rule.Description)));
+    }
+
+    [Fact]
     public async Task ApiProcessesAnEventAndReturnsASnapshot()
     {
         var response = await client.PostAsJsonAsync("/api/events", new IncomingEvent(Guid.NewGuid().ToString("N"), "api-alice", "Alice", "chat", "!sua"));

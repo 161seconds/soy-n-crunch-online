@@ -49,6 +49,12 @@ Loại: `join`, `chat`, `like`, `gift`. Quà có `giftName`, `diamondCount`, `re
 
 Kết quả xử lý gồm snapshot và `outcome`: `accepted`, `duplicate`, `ignored`, `full`, `busy`, `cooldown`, `closed`. Sự kiện kết thúc combo mới được đưa vào bộ nhớ chống trùng. Bộ nhớ giới hạn 5.000 ID gần nhất; cần kho bền vững khi triển khai nhận lại sự kiện qua nhiều phiên.
 
+`gifts.json` dùng chung cho `GiftCatalog`, frontend và `GET /api/gifts`, được copy khi build/publish như menu. Alias khớp toàn bộ tên qua cùng hàm chuẩn hóa menu; tên chưa biết dùng ngưỡng điểm cũ. Nhật ký có `effect`: `hearts`, `fireworks`, `festival`, `flowers`, `treat`, `rush`, `swan`, `dance`, `stars`; `repeatCount` và `demo` phục vụ badge combo/nhãn thử. Entry cũ thiếu metadata vẫn hiển thị được.
+
+Backend áp dụng phần thưởng sau validation/chống trùng. `PlaceOrder` dùng chung cho bình luận và quà mời món, giữ kiểm tra nhận món/busy/cooldown. Khách thưởng dùng cùng `Handle(join)` và luôn mang `demo=true`. Snapshot bổ sung `kitchenBoostUntil` nullable: quà GG/Fire hoặc vượt mốc 100 điểm làm mới tăng tốc 20 giây, món bắt đầu trong thời gian này chuẩn bị nhanh gấp đôi. Quà chỉ giảm deadline `cooking` còn hiệu lực, giữ nguyên phục vụ/ăn; `Tick` dọn boost hết hạn, reset xóa boost. Không lặp thưởng hoặc xử lý từng mốc trong một vòng lặp khi combo lớn vượt nhiều mốc.
+
+Frontend dùng ID/thời điểm server để dựng hoạt ảnh giống nhau, bỏ hiệu ứng quá 7 giây khi tải lại; tối đa ba entry `gift`/`milestone` gần nhất. Tiến trình lấy trực tiếp từ tổng điểm; countdown lấy từ `kitchenBoostUntil`, không tự cấp thưởng ở client. [Luật và nguồn](08-gift-interactions.md).
+
 ## An toàn và vòng đời
 
 - Mặc định chỉ bind `127.0.0.1`; kiểm tra Host và Origin, chỉ chấp nhận mutation JSON. Không đưa API điều khiển ra Internet khi chưa có xác thực.

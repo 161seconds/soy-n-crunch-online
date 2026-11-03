@@ -21,6 +21,8 @@ const before = await request("/api/session");
 const menu = JSON.parse(
   await readFile(new URL("../../menu.json", import.meta.url), "utf8"),
 );
+const gifts = JSON.parse(await readFile(new URL("../../gifts.json", import.meta.url), "utf8"));
+assert.deepEqual(await request("/api/gifts"), gifts, "Published gift rules must match the shared catalog");
 assert.deepEqual(
   await request("/api/menu"),
   menu,
@@ -89,6 +91,9 @@ try {
     () =>
       firstState?.stats.diamonds === 30 && secondState?.stats.diamonds === 30,
   );
+  assert.equal(firstState.feed.filter((entry) => entry.kind === "gift").at(-1).effect, "fireworks");
+  assert.equal(secondState.feed.filter((entry) => entry.kind === "gift").at(-1).effect, "fireworks");
+  assert.equal((await request("/api/events", { ...gift, repeatEnd: true })).outcome, "duplicate");
   await first.stop();
   await request("/api/events", event("like", { likeCount: 7 }));
   await first.start();
@@ -117,6 +122,37 @@ try {
     firstState.guests.map((guest) => guest.seat),
     Array.from({ length: 49 }, (_, i) => i),
   );
+  const festival = event("gift", { diamondCount: 100 });
+  assert.equal((await request("/api/events", festival)).outcome, "accepted");
+  await until(() => firstState?.stats.diamonds === 130 && secondState?.stats.diamonds === 130);
+  assert.equal(firstState.guests.length, 49);
+  assert.equal(secondState.feed.filter((entry) => entry.kind === "gift").at(-1).effect, "festival");
+  await request("/api/session/reset", {});
+  const invited = await request("/api/events", event("gift", { diamondCount: 100 }));
+  assert.equal(invited.session.guests.length, 3);
+  assert.ok(invited.session.guests.every((guest) => guest.demo));
+  await until(() => firstState?.guests.length === 3 && secondState?.guests.length === 3);
+  await request("/api/session/reset", {});
+  for (const rule of gifts) {
+    const result = await request("/api/events", event("gift", {
+      giftName: rule.example, diamondCount: rule.previewPoints, repeatCount: 1,
+    }));
+    assert.equal(result.session.feed.filter((entry) => entry.kind === "gift").at(-1).effect, rule.effect);
+    await until(() => secondState?.revision >= result.session.revision);
+    assert.equal(secondState.feed.filter((entry) => entry.kind === "gift").at(-1).effect, rule.effect);
+    if (rule.effect === "rush") assert.ok(Date.parse(secondState.kitchenBoostUntil) > Date.parse(secondState.serverTime));
+    if (rule.effect === "treat") assert.ok(secondState.orders.some((order) => order.item === "iced-yogurt"));
+  }
+  await request("/api/session/reset", {});
+  await request("/api/events", event("gift", { giftName: "Rose", repeatCount: 99 }));
+  const goalGift = event("gift", { giftName: "Rose" });
+  const goal = await request("/api/events", goalGift);
+  assert.equal(goal.session.stats.diamonds, 100);
+  assert.equal(goal.session.feed.filter((entry) => entry.kind === "milestone").length, 1);
+  assert.ok(goal.session.kitchenBoostUntil);
+  assert.equal((await request("/api/events", goalGift)).outcome, "duplicate");
+  await until(() => firstState?.stats.diamonds === 100 && secondState?.stats.diamonds === 100);
+  assert.equal(secondState.feed.filter((entry) => entry.kind === "milestone").length, 1);
   await request("/api/session/reset", {});
   for (const item of menu) {
     const result = await request(
@@ -137,7 +173,7 @@ try {
       secondState?.orders.length === menu.length,
   );
   console.log(
-    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, gift streak, replay protection, 49-seat capacity, all 28 Vietnamese dish names without !.",
+    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, nine gift interactions, community goal/boost, streak replay protection, 49-seat capacity, all 28 Vietnamese dish names without !.",
   );
 } finally {
   await first.stop();

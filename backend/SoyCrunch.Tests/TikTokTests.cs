@@ -27,18 +27,23 @@ public sealed class TikTokTests
         Assert.Equal(7, game.Snapshot().Stats.Likes);
     }
 
-    [Fact]
-    public void ProtobufGiftUsesCumulativeRepeatCountAndDeduplicatesTheGroup()
+    [Theory]
+    [InlineData(10, "flowers", 0)]
+    [InlineData(50, "flowers", 2)]
+    public void ProtobufGiftUsesCumulativeRepeatCountAndDeduplicatesTheGroup(int value, string effect, int invited)
     {
         var game = new GameService(TimeProvider.System);
         var client = new FixtureClient();
         var normalized = new List<IncomingEvent>();
         TikTokEvents.Attach(client, input => { normalized.Add(input); game.Handle(input); });
-        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 200 }, RepeatCount = 2, RepeatEnd = 0 });
+        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 200 }, RepeatCount = 2, RepeatEnd = 0, Gift = new() { Diamonds = value } });
         Assert.Equal(0, game.Snapshot().Stats.Diamonds);
-        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 201 }, RepeatCount = 3, RepeatEnd = 1 });
-        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 202 }, RepeatCount = 3, RepeatEnd = 1 });
-        Assert.Equal(30, game.Snapshot().Stats.Diamonds);
+        Assert.DoesNotContain(game.Snapshot().Feed, entry => entry.Kind == "gift");
+        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 201 }, RepeatCount = 3, RepeatEnd = 1, Gift = new() { Diamonds = value } });
+        client.Push("WebcastGiftMessage", new GiftWire { Header = new() { Id = 202 }, RepeatCount = 3, RepeatEnd = 1, Gift = new() { Diamonds = value } });
+        Assert.Equal(value * 3, game.Snapshot().Stats.Diamonds);
+        Assert.Equal(effect, Assert.Single(game.Snapshot().Feed, entry => entry.Kind == "gift").Effect);
+        Assert.Equal(invited, game.Snapshot().Guests.Count(g => g.Demo));
         Assert.Equal(3, normalized.Last().RepeatCount);
         Assert.Equal(normalized[1].EventId, normalized[2].EventId);
         Assert.Equal("Hoa hồng", normalized.Last().GiftName);

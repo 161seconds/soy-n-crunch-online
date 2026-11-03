@@ -15,6 +15,9 @@ Quán sữa hạt, món lạnh và bánh ăn vặt ảo trên TikTok LIVE. Ngư�
 - Khách không có món được dọn sau 120 giây không tương tác. Vào phòng và thả tim không tự tạo đơn.
 - Tim được cộng vào tổng phiên, hiệu ứng hiển thị được giới hạn. Quà tạo banner cảm ơn, điểm ủng hộ và hiệu ứng; không phải thanh toán mua đồ ăn thật.
 - Combo quà chỉ ghi nhận khi kết thúc. Sự kiện trùng không cộng điểm/lượt phục vụ lần nữa.
+- Tổng điểm một combo = `diamondCount × repeatCount`: từ 10 điểm giảm nửa thời gian chế biến còn lại; từ 100 điểm mời tối đa hai khách mô phỏng nếu còn chỗ. Tên quà chọn một trong các chủ đề hoa, mời yogurt đá, bếp nhanh, thiên nga, vũ điệu, sao băng; tên chưa biết dùng tim/pháo hoa/lễ hội theo ngưỡng 10/100. Mời món vẫn kiểm tra nhận món, chỗ ngồi, món đang có và cooldown; quà không đẩy khách đang ngồi ra ngoài. [Danh sách và nguồn nghiên cứu](08-gift-interactions.md).
+- Mỗi mốc 100 điểm cộng dồn mở lễ hội và bếp nhanh gấp đôi trong 20 giây. Tăng tốc được làm mới, không cộng thời gian; chỉ giảm chuẩn bị, giữ thời gian phục vụ/ăn. Reset xóa cả mốc điểm và tăng tốc; sự kiện gửi lại không lặp phần thưởng.
+- Hiệu ứng tối đa 7 giây, hiện tối đa ba quà/lễ hội gần nhất; combo tăng mật độ có trần, người tặng có hào quang. Giảm chuyển động tắt hạt/nhún nhảy, giữ banner và thanh tiến trình. Bộ thử có chín lựa chọn và số lượng combo, không gửi quà lên TikTok hay niêm yết giá TikTok.
 - Bảng điều khiển: trạng thái phiên, danh sách đơn/khách, thử sự kiện, bot mô phỏng, ngưng nhận món, reset phiên, mở overlay và kết nối/ngắt TikTok.
 
 ## Luồng chính

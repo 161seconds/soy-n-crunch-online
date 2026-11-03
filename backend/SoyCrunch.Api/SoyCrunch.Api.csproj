@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="TikTokLive_Sharp" Version="1.2.3" />
     <None Include="../../menu.json" Link="menu.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../gifts.json" Link="gifts.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../THIRD_PARTY_NOTICES.md" Link="THIRD_PARTY_NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

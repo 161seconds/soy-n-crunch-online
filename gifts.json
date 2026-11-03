@@ -1,0 +1,74 @@
+[
+  {
+    "effect": "hearts",
+    "title": "TRÁI TIM GỬI BẠN",
+    "example": "Quà nhỏ",
+    "aliases": [],
+    "previewPoints": 1,
+    "description": "Quà chưa khớp tên, dưới 10 điểm: tim bay trên hồ."
+  },
+  {
+    "effect": "fireworks",
+    "title": "PHÁO HOA CHÀO BẠN",
+    "example": "Quà vừa",
+    "aliases": [],
+    "previewPoints": 10,
+    "description": "Quà chưa khớp tên, 10–99 điểm: pháo hoa, giảm nửa thời gian món đang nấu."
+  },
+  {
+    "effect": "festival",
+    "title": "ĐÊM HỘI BÊN HỒ",
+    "example": "Quà lớn",
+    "aliases": [],
+    "previewPoints": 100,
+    "description": "Quà chưa khớp tên, từ 100 điểm: lễ hội, mời tối đa 2 khách mô phỏng."
+  },
+  {
+    "effect": "flowers",
+    "title": "MƯA HOA BÊN HỒ",
+    "example": "Rose",
+    "aliases": ["Rose", "Roses", "Hoa hồng", "Flower", "Flowers", "Bouquet", "Bó hoa"],
+    "previewPoints": 1,
+    "description": "Rose / Hoa hồng / Bouquet: cánh hoa rơi và tôn vinh người tặng."
+  },
+  {
+    "effect": "treat",
+    "title": "MỜI BẠN MÓN NGỌT",
+    "example": "Ice Cream",
+    "aliases": ["Ice Cream", "Kem", "Coffee", "Cà phê", "Doughnut", "Donut", "Bánh donut", "Chocolate", "Sô cô la"],
+    "previewPoints": 1,
+    "description": "Ice Cream / Coffee / Doughnut: mời người tặng yogurt đá nếu đủ điều kiện nhận món."
+  },
+  {
+    "effect": "rush",
+    "title": "BẾP RỰC LỬA",
+    "example": "GG",
+    "aliases": ["GG", "Fire", "Flame", "Lửa", "Chili", "Ớt"],
+    "previewPoints": 1,
+    "description": "GG / Fire: tăng tốc bếp gấp đôi trong 20 giây, làm mới thời hạn khi nhận tiếp."
+  },
+  {
+    "effect": "swan",
+    "title": "THIÊN NGA GHÉ HỒ",
+    "example": "Swan",
+    "aliases": ["Swan", "Thiên nga"],
+    "previewPoints": 1,
+    "description": "Swan / Thiên nga: đôi thiên nga lướt hồ, mời tối đa 2 khách mô phỏng nếu còn chỗ."
+  },
+  {
+    "effect": "dance",
+    "title": "VŨ ĐIỆU ĐÀ LẠT",
+    "example": "Music Note",
+    "aliases": ["Music Note", "Musical Notes", "Nốt nhạc", "Disco Ball", "Microphone", "Mic", "Âm nhạc"],
+    "previewPoints": 1,
+    "description": "Music Note / Disco Ball: nốt nhạc bay, cả quán cùng nhún nhảy."
+  },
+  {
+    "effect": "stars",
+    "title": "NGÂN HÀ TRÊN HỒ",
+    "example": "Galaxy",
+    "aliases": ["Galaxy", "Ngân hà", "Thiên hà", "Planet", "Hành tinh", "Shooting Star", "Sao băng", "Star", "Ngôi sao"],
+    "previewPoints": 1,
+    "description": "Galaxy / Planet / Sao băng: một đợt sao băng trên bầu trời đêm."
+  }
+]

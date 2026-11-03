@@ -1,6 +1,8 @@
 import menuData from "../../menu.json";
+import giftData from "../../gifts.json";
 
 export const menu = menuData;
+export const giftRules = giftData;
 export const menuGroups = [...new Set(menu.map((item) => item.category))];
 export const menuPages = menuGroups.flatMap((category) => {
   const items = menu.filter((item) => item.category === category);
@@ -42,9 +44,18 @@ export interface Session {
   settings: { title: string; acceptingOrders: boolean };
   guests: Guest[];
   orders: FoodOrder[];
-  feed: { id: string; kind: string; text: string; at: string }[];
+  feed: {
+    id: string;
+    kind: string;
+    text: string;
+    at: string;
+    effect?: "hearts" | "fireworks" | "festival" | "flowers" | "treat" | "rush" | "swan" | "dance" | "stars" | null;
+    repeatCount?: number;
+    demo?: boolean;
+  }[];
   stats: { served: number; likes: number; diamonds: number };
   demoRunning: boolean;
+  kitchenBoostUntil?: string | null;
   connector: {
     status: string;
     username: string;

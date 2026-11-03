@@ -20,7 +20,7 @@ public static class MenuCatalog
             || Normalize(item.Command) == name || item.Aliases.Any(alias => Normalize(alias) == name));
     }
 
-    private static string Normalize(string text)
+    internal static string Normalize(string text)
     {
         text = text.Trim();
         if (text.StartsWith('!')) text = text[1..];

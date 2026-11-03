@@ -13,6 +13,8 @@ Tên hiển thị mặc định: **Sữa & Giòn**. Quán ven Hồ Xuân Hương
 - Chừa biên phải/bottom cho giao diện TikTok; phải thử capture thực tế vì UI từng thiết bị có thể khác nhau.
 - Tên khách có nền tương phản, rút gọn khi dài. Bong bóng bình luận có thời hạn, hiệu ứng có trần.
 - Nhãn “MÔ PHỎNG” xuất hiện khi có khách/bot giả; không trình bày bot thành người xem thật.
+- Chín hiệu ứng quà dùng Canvas sẵn có: tim, pháo hoa, lễ hội/giấy màu, hoa rơi, món ngọt, bếp rực lửa, thiên nga lướt hồ, nốt nhạc/khách nhún nhảy, sao băng. Không thêm thư viện/hình tải ngoài/nhạc thương mại/chớp toàn màn hình. Banner có tên và badge combo; người tặng có hào quang/ngôi sao. Giảm chuyển động giữ banner/điểm sáng tĩnh, tắt hạt/nhún nhảy. Tối đa ba hiệu ứng gần nhất, mỗi hiệu ứng không quá 7 giây; mật độ combo có trần.
+- Thanh mốc quà và thời gian bếp ×2 thay dòng trang trí ở chân cảnh, giữ khoảng hở với hàng bàn cuối. Bộ thử dùng một select và ô số combo, có thể thu gọn, tránh thêm chín nút chen vào hàng điều khiển.
 - Menu hiển thị tên món tiếng Việt và hướng dẫn gõ tên để gọi, không cần `!`. Mỗi trang tối đa bốn món cùng nhóm, đổi mỗi 8 giây. Nút **Dừng menu** nằm cạnh nút âm thanh; giảm chuyển động mặc định dừng đổi trang. Bảng điều khiển có bộ chọn nhóm và vùng món cuộn được bằng bàn phím.
 
 ## Tài nguyên bản đầu

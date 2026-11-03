@@ -15,6 +15,7 @@ One local streaming PC, one live session, 25 tables with 49 seats (24 pairs and 
 - [TikTok connector verification](docs/05-connector-verification.md)
 - [Validation results and remaining checks](docs/06-validation.md)
 - [Menu and chat commands](docs/07-menu.md)
+- [Gift interactions and research sources](docs/08-gift-interactions.md)
 
 ## Run locally
 
@@ -47,6 +48,10 @@ The backend and frontend share [menu.json](menu.json). It contains names, comman
 The lakeside overlay illustrates Xuan Huong Lake in Da Lat at night, with moonlight, warm lamps, pine-covered hills, and Lam Vien Square's wild sunflower and artichoke landmarks. One centered cart serves milk, pastries, and cold desserts. The title, subtitle, stats, and comment invitation form a spaced vertical header; the menu sits below the cart. The lit terrace fits 25 tables and 49 seats in seven compact rows, with a center aisle. The last table has one seat and sits left of the aisle. The original SVG background is bundled locally.
 
 All simulated guests are marked as such. Enter a public TikTok username and click **Kết nối** after starting a LIVE. The initial C# connector verification returned `LiveNotFoundException` for `@one61secondz`; actual live events remain unverified. A failed connection never enables a fake “connected” state.
+
+Gift combos trigger once when complete. Nine interactions cover hearts, fireworks, festivals, falling flowers, a dessert for the sender, a 20-second kitchen boost, swans with simulated visitors, dancing guests, and shooting stars. Whole-name aliases in shared [gifts.json](gifts.json) select a theme; unknown gifts keep the original point tiers: below 10 shows hearts, 10–99 fireworks, and 100+ a festival. Every gift worth 10+ points halves the current cooking order's remaining preparation time; 100+ invites up to two simulated guests within the 49-seat limit. Dessert gifts use the same open/busy/cooldown checks as chat orders.
+
+Every cumulative 100 points unlocks a festival and doubles kitchen speed for 20 seconds. Repeated boosts refresh the deadline without stacking time. The overlay shows community progress, a boost countdown, a combo badge, and a temporary halo on the sender. Effects expire after seven seconds and respect reduced motion. In **Quà TikTok · 9 kiểu tương tác**, choose a gift and combo count, then **Thử quà**. Preview points are invented test values, not TikTok prices; previews send local simulated events only. See [rules, examples, sources, and limits](docs/08-gift-interactions.md).
 
 ## Validate
 

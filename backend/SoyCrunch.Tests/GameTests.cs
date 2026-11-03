@@ -129,9 +129,215 @@ public sealed class GameTests
         var gift = new IncomingEvent("streak", "alice", "Alice", "gift", DiamondCount: 10, RepeatCount: 3, GiftType: 1, RepeatEnd: false);
         Assert.Equal("ignored", game.Handle(gift).Outcome);
         Assert.Equal(0, game.Snapshot().Stats.Diamonds);
+        Assert.DoesNotContain(game.Snapshot().Feed, entry => entry.Kind == "gift");
         Assert.Equal("accepted", game.Handle(gift with { RepeatEnd = true }).Outcome);
         Assert.Equal("duplicate", game.Handle(gift with { RepeatEnd = true }).Outcome);
         Assert.Equal(30, game.Snapshot().Stats.Diamonds);
+        Assert.Equal("fireworks", Assert.Single(game.Snapshot().Feed, entry => entry.Kind == "gift").Effect);
+    }
+
+    [Theory]
+    [InlineData(0, 1, "hearts")]
+    [InlineData(9, 1, "hearts")]
+    [InlineData(1, 10, "fireworks")]
+    [InlineData(10, 1, "fireworks")]
+    [InlineData(99, 1, "fireworks")]
+    [InlineData(25, 4, "festival")]
+    [InlineData(100, 1, "festival")]
+    [InlineData(50_000, 10_000, "festival")]
+    public void GiftEffectsUseTheTotalComboValue(int value, int repeat, string effect)
+    {
+        var game = Game();
+        var result = game.Handle(new("gift", "alice", "Alice", "gift", DiamondCount: value, RepeatCount: repeat));
+        Assert.Equal("accepted", result.Outcome);
+        Assert.Equal((long)value * repeat, result.Session.Stats.Diamonds);
+        Assert.Equal(effect, Assert.Single(result.Session.Feed, entry => entry.Kind == "gift").Effect);
+        Assert.Equal(effect == "festival" ? 2 : 0, result.Session.Guests.Count(g => g.Demo));
+    }
+
+    [Fact]
+    public void CompletedGiftComboSpeedsUpCookingAndInvitesGuestsOnlyOnce()
+    {
+        var game = Game(); game.Handle(Chat("!banh")); game.Tick(); clock.Advance(1);
+        var gift = new IncomingEvent("combo", "alice", "Alice", "gift", DiamondCount: 10, RepeatCount: 10, GiftType: 1, RepeatEnd: false);
+        var original = Assert.Single(game.Snapshot().Orders).Until;
+        Assert.Equal("ignored", game.Handle(gift).Outcome);
+        Assert.Equal(original, Assert.Single(game.Snapshot().Orders).Until);
+        Assert.Single(game.Snapshot().Guests);
+        game.Handle(gift with { RepeatEnd = true });
+        var deadline = clock.GetUtcNow().AddSeconds(1.5);
+        Assert.Equal(deadline, Assert.Single(game.Snapshot().Orders).Until);
+        Assert.Equal(2, game.Snapshot().Guests.Count(g => g.Demo));
+        Assert.Equal("duplicate", game.Handle(gift with { RepeatEnd = true }).Outcome);
+        Assert.Equal(deadline, Assert.Single(game.Snapshot().Orders).Until);
+        Assert.Equal(2, game.Snapshot().Guests.Count(g => g.Demo));
+        clock.Advance(1); Assert.Equal("cooking", Assert.Single(game.Tick().Orders).State);
+        clock.Advance(1); Assert.Equal("serving", Assert.Single(game.Tick().Orders).State);
+    }
+
+    [Fact]
+    public void SmallOrLateGiftsDoNotChangeCookingDeadlines()
+    {
+        var game = Game(); game.Handle(Chat("!banh")); game.Tick();
+        var deadline = Assert.Single(game.Snapshot().Orders).Until;
+        game.Handle(new("small", "alice", "Alice", "gift", DiamondCount: 9));
+        Assert.Equal(deadline, Assert.Single(game.Snapshot().Orders).Until);
+        clock.Advance(5);
+        game.Handle(new("late", "alice", "Alice", "gift", DiamondCount: 10));
+        Assert.Equal(deadline, Assert.Single(game.Snapshot().Orders).Until);
+    }
+
+    [Fact]
+    public void FestivalGuestsRespectCapacityAndNeverDisplaceRealGuests()
+    {
+        var game = Game();
+        for (var i = 0; i < 48; i++) game.Handle(Chat("hello", $"user-{i}"));
+        game.Handle(new("festival", "user-0", "Alice", "gift", DiamondCount: 100));
+        Assert.Equal(49, game.Snapshot().Guests.Length);
+        Assert.Equal(48, game.Snapshot().Guests.Count(g => !g.Demo));
+        Assert.Single(game.Snapshot().Guests, g => g.Demo);
+        var result = game.Handle(new("outside", "no-seat", "Bob", "gift", DiamondCount: 100));
+        Assert.Equal("accepted", result.Outcome);
+        Assert.Equal(49, result.Session.Guests.Length);
+        Assert.DoesNotContain(result.Session.Guests, g => g.Id == "no-seat");
+        Assert.Equal("festival", result.Session.Feed.Last().Effect);
+        Assert.Equal(200, result.Session.Stats.Diamonds);
+    }
+
+    [Theory]
+    [InlineData("  HOA  HỒNG ", "flowers")]
+    [InlineData("Rose", "flowers")]
+    [InlineData("ICE CREAM", "treat")]
+    [InlineData("ca phe", "treat")]
+    [InlineData("GG", "rush")]
+    [InlineData("thien nga", "swan")]
+    [InlineData("Music Note", "dance")]
+    [InlineData("sao bang", "stars")]
+    [InlineData("Rose Garden", "hearts")]
+    [InlineData("mystery", "hearts")]
+    public void GiftNamesMatchWholeAliasesWithTheMenuNormalization(string name, string effect)
+    {
+        var game = Game();
+        var result = game.Handle(new("theme", "alice", "Alice", "gift",
+            GiftName: name.Normalize(NormalizationForm.FormD), RepeatCount: 2, Demo: true));
+        var entry = Assert.Single(result.Session.Feed, e => e.Kind == "gift");
+        Assert.Equal(effect, entry.Effect);
+        Assert.Equal(2, entry.RepeatCount);
+        Assert.True(entry.Demo);
+    }
+
+    [Theory]
+    [InlineData("Rose", "flowers")]
+    [InlineData("Ice Cream", "treat")]
+    [InlineData("GG", "rush")]
+    [InlineData("Swan", "swan")]
+    [InlineData("Music Note", "dance")]
+    [InlineData("Galaxy", "stars")]
+    public void NamedGiftsKeepTheirThemeAndValueRewardsWithoutDoublingInvitations(string name, string effect)
+    {
+        var game = Game();
+        var result = game.Handle(new("theme", "alice", "Alice", "gift", GiftName: name, DiamondCount: 100));
+        Assert.Equal(effect, Assert.Single(result.Session.Feed, e => e.Kind == "gift").Effect);
+        Assert.Equal(100, result.Session.Stats.Diamonds);
+        Assert.Equal(2, result.Session.Guests.Count(g => g.Demo));
+        Assert.Equal(clock.GetUtcNow().AddSeconds(20), result.Session.KitchenBoostUntil);
+    }
+
+    [Fact]
+    public void TreatsUseTheNormalKitchenAndRespectBusyClosedAndFullGuards()
+    {
+        var game = Game();
+        var gift = new IncomingEvent("treat", "alice", "Alice", "gift", GiftName: "Ice Cream");
+        game.Handle(gift);
+        Assert.Equal("iced-yogurt", Assert.Single(game.Snapshot().Orders).Item);
+        Assert.Equal(0, game.Snapshot().Stats.Served);
+        Assert.Equal("duplicate", game.Handle(gift).Outcome);
+        game.Handle(gift with { EventId = "busy" });
+        Assert.Single(game.Snapshot().Orders);
+        Assert.Contains("đang có một món", game.Snapshot().Feed.Last().Text);
+        game.UpdateSettings(new("Quán", false));
+        game.Handle(gift with { EventId = "closed", ViewerId = "bob" });
+        Assert.Single(game.Snapshot().Orders);
+        Assert.Contains("ngưng nhận món", game.Snapshot().Feed.Last().Text);
+
+        game = Game();
+        for (var i = 0; i < 49; i++) game.Handle(Chat("hello", $"guest-{i}"));
+        game.Handle(gift);
+        Assert.Equal(49, game.Snapshot().Guests.Length);
+        Assert.Empty(game.Snapshot().Orders);
+        Assert.Contains("Quán đầy", game.Snapshot().Feed.Last().Text);
+    }
+
+    [Fact]
+    public void ABoostedDessertStillCannotBypassTheEightSecondCooldown()
+    {
+        var game = Game();
+        game.Handle(new("rush", "alice", "Alice", "gift", GiftName: "GG"));
+        game.Handle(Chat("yogurt đá")); game.Tick();
+        clock.Advance(0.5); game.Tick();
+        clock.Advance(1); game.Tick();
+        clock.Advance(6); game.Tick();
+        Assert.Equal(1, game.Snapshot().Stats.Served);
+        var gift = new IncomingEvent("early", "alice", "Alice", "gift", GiftName: "Kem");
+        game.Handle(gift);
+        Assert.Empty(game.Snapshot().Orders);
+        Assert.Contains("8 giây", game.Snapshot().Feed.Last().Text);
+        clock.Advance(0.5);
+        game.Handle(gift with { EventId = "ready" });
+        Assert.Single(game.Snapshot().Orders);
+    }
+
+    [Fact]
+    public void RushSpeedsUpCurrentAndQueuedCookingThenExpires()
+    {
+        var game = Game(); game.Handle(Chat("!banh")); game.Tick(); clock.Advance(1);
+        game.Handle(new("rush", "alice", "Alice", "gift", GiftName: "GG"));
+        Assert.Equal(clock.GetUtcNow().AddSeconds(1.5), Assert.Single(game.Snapshot().Orders).Until);
+        game.Handle(Chat("!banh", "bob"));
+        clock.Advance(1.5); game.Tick();
+        Assert.Equal(clock.GetUtcNow().AddSeconds(2), game.Snapshot().Orders.Single(o => o.GuestId == "bob").Until);
+        clock.Advance(19); game.Tick();
+        Assert.Null(game.Snapshot().KitchenBoostUntil);
+        game.Handle(Chat("!sua", "charlie")); game.Tick();
+        Assert.Equal(clock.GetUtcNow().AddSeconds(2), game.Snapshot().Orders.Single(o => o.GuestId == "charlie").Until);
+    }
+
+    [Fact]
+    public void RushRefreshesWithoutStackingAndResetClearsIt()
+    {
+        var game = Game();
+        var gift = new IncomingEvent("rush", "alice", "Alice", "gift", GiftName: "Fire");
+        game.Handle(gift); clock.Advance(5);
+        game.Handle(gift with { EventId = "refresh" });
+        Assert.Equal(clock.GetUtcNow().AddSeconds(20), game.Snapshot().KitchenBoostUntil);
+        clock.Advance(5);
+        game.Handle(gift with { EventId = "refresh" });
+        Assert.Equal(clock.GetUtcNow().AddSeconds(15), game.Snapshot().KitchenBoostUntil);
+        Assert.Null(game.Reset().KitchenBoostUntil);
+        Assert.Equal(0, game.Snapshot().Stats.Diamonds);
+    }
+
+    [Fact]
+    public void CommunityGoalsCountCumulativePointsAndNeverRepeatForAReplayOrEachCrossedGoal()
+    {
+        var game = Game();
+        game.Handle(new("before", "alice", "Alice", "gift", DiamondCount: 99));
+        Assert.Null(game.Snapshot().KitchenBoostUntil);
+        var rose = new IncomingEvent("rose", "alice", "Alice", "gift", GiftName: "Rose");
+        game.Handle(rose);
+        Assert.Single(game.Snapshot().Feed, e => e.Kind == "milestone");
+        Assert.Equal("flowers", game.Snapshot().Feed.Last().Effect);
+        var until = game.Snapshot().KitchenBoostUntil;
+        clock.Advance(1); game.Handle(rose);
+        Assert.Equal(100, game.Snapshot().Stats.Diamonds);
+        Assert.Equal(until, game.Snapshot().KitchenBoostUntil);
+        Assert.Single(game.Snapshot().Feed, e => e.Kind == "milestone");
+
+        game.Reset();
+        game.Handle(rose with { RepeatCount = 350 });
+        Assert.Equal(350, game.Snapshot().Stats.Diamonds);
+        Assert.Single(game.Snapshot().Feed, e => e.Kind == "milestone");
+        Assert.Contains("300 điểm", game.Snapshot().Feed.Single(e => e.Kind == "milestone").Text);
     }
 
     [Fact]
@@ -201,6 +407,6 @@ public sealed class GameTests
     {
         private DateTimeOffset now = new(2026, 11, 2, 0, 0, 0, TimeSpan.Zero);
         public override DateTimeOffset GetUtcNow() => now;
-        public void Advance(int seconds) => now = now.AddSeconds(seconds);
+        public void Advance(double seconds) => now = now.AddSeconds(seconds);
     }
 }

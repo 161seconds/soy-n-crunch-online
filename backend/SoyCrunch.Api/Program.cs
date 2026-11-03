@@ -3,7 +3,7 @@ using SoyCrunch.Api;
 using SoyCrunch.Api.Game;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://127.0.0.1:5186");
+builder.WebHost.UseUrls(builder.Configuration["urls"] ?? "http://127.0.0.1:5186");
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 64 * 1024);
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<GameService>();
@@ -41,6 +41,7 @@ if (Directory.Exists(app.Environment.WebRootPath))
 app.MapGet("/api/health", () => new { status = "ok", application = "Soy & Crunch" });
 app.MapGet("/api/session", (GameService game) => game.Snapshot());
 app.MapGet("/api/menu", () => MenuCatalog.Items);
+app.MapGet("/api/gifts", () => GiftCatalog.Items);
 app.MapPost("/api/events", (IncomingEvent input, GameService game) => game.Handle(input));
 app.MapPost("/api/session/settings", (ShopSettings input, GameService game) => game.UpdateSettings(input));
 app.MapPost("/api/session/reset", (GameService game) => game.Reset());

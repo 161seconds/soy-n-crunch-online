@@ -5,6 +5,7 @@ import Scene from "./Scene";
 import { CAPACITY } from "./layout";
 import {
   itemName,
+  giftRules,
   menu,
   menuGroups,
   menuItem,
@@ -58,6 +59,9 @@ export default function App() {
   const [title, setTitle] = useState("Sữa & Giòn");
   const [showGuests, setShowGuests] = useState(false);
   const [menuGroup, setMenuGroup] = useState(menuGroups[0]);
+  const [giftEffect, setGiftEffect] = useState("flowers");
+  const [giftRepeat, setGiftRepeat] = useState(1);
+  const giftRule = giftRules.find((rule) => rule.effect === giftEffect)!;
   const [menuPaused, setMenuPaused] = useState(
     () => matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
@@ -503,19 +507,6 @@ export default function App() {
                   className="button soft"
                   disabled={disabled}
                   onClick={() =>
-                    simulate("gift", {
-                      giftName: "Hoa hồng",
-                      diamondCount: 1,
-                      repeatCount: 1,
-                    })
-                  }
-                >
-                  <Icon name="diamond" size={17} /> Thử quà
-                </button>
-                <button
-                  className="button soft"
-                  disabled={disabled}
-                  onClick={() =>
                     void action(
                       () =>
                         post("/api/demo", { enabled: !session.demoRunning }),
@@ -529,6 +520,32 @@ export default function App() {
                   {session.demoRunning ? "Dừng bot" : "Mời 12 khách"}
                 </button>
               </div>
+              <details className="gift-lab" open>
+                <summary>Quà TikTok · {giftRules.length} kiểu tương tác</summary>
+                <form onSubmit={(event) => {
+                  event.preventDefault();
+                  simulate("gift", { giftName: giftRule.example,
+                    diamondCount: giftRule.previewPoints, repeatCount: giftRepeat });
+                }}>
+                  <label htmlFor="gift-effect">Quà / hiệu ứng</label>
+                  <select id="gift-effect" value={giftEffect} onChange={(event) => setGiftEffect(event.target.value)}>
+                    {giftRules.map((rule) => <option key={rule.effect} value={rule.effect}>
+                      {rule.example} · {rule.title.toLocaleLowerCase("vi-VN")}
+                    </option>)}
+                  </select>
+                  <div className="gift-repeat-row">
+                    <label htmlFor="gift-repeat">Số lượng combo
+                      <input id="gift-repeat" type="number" min={1} max={10000} step={1} required
+                        value={giftRepeat} onChange={(event) => setGiftRepeat(Number(event.target.value))} />
+                    </label>
+                    <button className="button soft" disabled={disabled}>
+                      <Icon name="diamond" size={17} /> Thử quà
+                    </button>
+                  </div>
+                </form>
+                <p className="field-note">{giftRule.description}</p>
+                <p className="field-note">Điểm thử: {giftRule.previewPoints}/quà, không phải giá TikTok. Mỗi 100 điểm cộng dồn mở lễ hội và bếp ×2 trong 20 giây.</p>
+              </details>
             </section>
 
             <section className="panel kitchen">

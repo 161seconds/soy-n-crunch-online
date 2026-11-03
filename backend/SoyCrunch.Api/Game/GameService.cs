@@ -15,6 +15,7 @@ public sealed class GameService(TimeProvider clock)
     private readonly string[] demoNames = ["Minh Anh", "Bảo Ngọc", "Hoàng Nam", "Linh", "Hà My", "Tuấn", "Bắp", "An Nhiên", "Khánh", "Mây", "Hải", "Thảo", "Đậu", "Sóc", "Ngọc", "Bình", "Phúc", "Vy", "Mai", "Duy", "Kem", "Trâm", "Sơn", "Hân"];
     private DateTimeOffset startedAt = clock.GetUtcNow();
     private DateTimeOffset nextDemoAt;
+    private DateTimeOffset? kitchenBoostUntil;
     private long revision = clock.GetUtcNow().ToUnixTimeMilliseconds();
     private int served;
     private long likes, diamonds;
@@ -59,10 +60,47 @@ public sealed class GameService(TimeProvider clock)
             if (input.Type == "gift")
             {
                 var amount = (long)input.DiamondCount * input.RepeatCount;
+                var previousGoal = diamonds / 100;
                 diamonds += amount;
+                var reachedGoal = diamonds / 100 > previousGoal;
+                var effect = GiftCatalog.Effect(input.GiftName, amount);
+                var boost = effect == "rush" || reachedGoal;
+                if (boost) kitchenBoostUntil = now.AddSeconds(20);
                 if (guest is not null)
                     guests[guest.Id] = guest with { Diamonds = guest.Diamonds + amount, LastSeenAt = now, Reaction = "gift", ReactionAt = now };
-                AddFeed("gift", $"Cảm ơn {Clean(input.Name, 24)}: {Clean(input.GiftName ?? "quà", 40)} ×{input.RepeatCount}");
+                var bonus = boost ? " · Bếp nhanh ×2 trong 20 giây" : "";
+                if (amount >= 10 || boost)
+                {
+                    var cooking = orders.FindIndex(o => o.State == "cooking" && o.Until > now);
+                    if (cooking >= 0)
+                    {
+                        var order = orders[cooking];
+                        orders[cooking] = order with { Until = now + (order.Until!.Value - now) / 2 };
+                        bonus += " · Bếp giảm nửa thời gian nấu còn lại";
+                    }
+                }
+                if (effect == "treat")
+                {
+                    var reward = guest is null ? (Outcome: "full", Message: "Quán đầy, chưa thể mời món")
+                        : PlaceOrder(guest, MenuCatalog.Get("iced-yogurt"), now);
+                    bonus += reward.Outcome == "accepted" ? " · Mời bạn một yogurt đá" : $" · {reward.Message}";
+                }
+                if (amount >= 100 || effect == "swan")
+                {
+                    var invited = 0;
+                    for (; invited < 2 && guests.Count < Capacity; invited++)
+                        Handle(new(Guid.NewGuid().ToString("N"), $"gift-demo-{Guid.NewGuid():N}",
+                            demoNames[Random.Shared.Next(demoNames.Length)], "join", Demo: true));
+                    if (invited > 0) bonus += $" · Mời {invited} khách mô phỏng";
+                }
+                if (reachedGoal)
+                {
+                    var milestone = $"Cả quán đạt mốc {diamonds / 100 * 100} điểm · Bếp nhanh ×2 trong 20 giây";
+                    if (effect != "festival") AddFeed("milestone", milestone, "festival", demo: input.Demo);
+                    else bonus += $" · Đạt mốc {diamonds / 100 * 100} điểm";
+                }
+                AddFeed("gift", $"Cảm ơn {Clean(input.Name, 24)}: {Clean(input.GiftName ?? "quà", 40)} ×{input.RepeatCount}{bonus}",
+                    effect, input.RepeatCount, input.Demo);
                 Changed();
                 return Result("accepted", "Đã nhận quà");
             }
@@ -81,15 +119,8 @@ public sealed class GameService(TimeProvider clock)
             Changed();
             var item = MenuCatalog.Match(text);
             if (item is null) return Result("accepted", "Đã nhận bình luận");
-            if (!settings.AcceptingOrders) return Result("closed", "Quán đang ngưng nhận món");
-            if (orders.Any(o => o.GuestId == guest.Id)) return Result("busy", "Khách đang có một món");
-            if (lastOrders.TryGetValue(guest.Id, out var last) && now - last < TimeSpan.FromSeconds(8))
-                return Result("cooldown", "Chờ đủ 8 giây giữa hai lần gọi món");
-            orders.Add(new(Guid.NewGuid().ToString("N"), guest.Id, item.Id, "queued", now));
-            lastOrders[guest.Id] = now;
-            AddFeed("order", $"{guest.Name} gọi {item.Name}");
-            Changed();
-            return Result("accepted", "Bếp đã nhận món");
+            var result = PlaceOrder(guest, item, now);
+            return Result(result.Outcome, result.Message);
         }
     }
 
@@ -98,6 +129,11 @@ public sealed class GameService(TimeProvider clock)
         lock (gate)
         {
             var now = clock.GetUtcNow();
+            if (kitchenBoostUntil <= now)
+            {
+                kitchenBoostUntil = null;
+                Changed();
+            }
             foreach (var order in orders.ToArray())
             {
                 if (order.Until is null || order.Until > now) continue;
@@ -119,7 +155,8 @@ public sealed class GameService(TimeProvider clock)
                 var next = orders.FirstOrDefault(o => o.State == "queued");
                 if (next is not null)
                 {
-                    orders[orders.IndexOf(next)] = next with { State = "cooking", Until = now.AddSeconds(MenuCatalog.Get(next.Item).PrepSeconds) };
+                    var seconds = MenuCatalog.Get(next.Item).PrepSeconds / (kitchenBoostUntil > now ? 2d : 1d);
+                    orders[orders.IndexOf(next)] = next with { State = "cooking", Until = now.AddSeconds(seconds) };
                     Changed();
                 }
             }
@@ -172,6 +209,7 @@ public sealed class GameService(TimeProvider clock)
         {
             guests.Clear(); orders.Clear(); feed.Clear(); seen.Clear(); seenOrder.Clear(); lastOrders.Clear();
             served = 0; likes = 0; diamonds = 0; demoRunning = false; startedAt = clock.GetUtcNow();
+            kitchenBoostUntil = null;
             AddFeed("system", "Phiên mới đã bắt đầu"); Changed();
             return SnapshotUnsafe();
         }
@@ -196,16 +234,28 @@ public sealed class GameService(TimeProvider clock)
         }
     }
     public static string ItemName(string item) => MenuCatalog.Get(item).Name;
+    private (string Outcome, string Message) PlaceOrder(Guest guest, MenuItem item, DateTimeOffset now)
+    {
+        if (!settings.AcceptingOrders) return ("closed", "Quán đang ngưng nhận món");
+        if (orders.Any(o => o.GuestId == guest.Id)) return ("busy", "Khách đang có một món");
+        if (lastOrders.TryGetValue(guest.Id, out var last) && now - last < TimeSpan.FromSeconds(8))
+            return ("cooldown", "Chờ đủ 8 giây giữa hai lần gọi món");
+        orders.Add(new(Guid.NewGuid().ToString("N"), guest.Id, item.Id, "queued", now));
+        lastOrders[guest.Id] = now;
+        AddFeed("order", $"{guest.Name} gọi {item.Name}");
+        Changed();
+        return ("accepted", "Bếp đã nhận món");
+    }
     private EventResult Result(string outcome, string message) => new(outcome, message, SnapshotUnsafe());
     private void Changed() => revision = Math.Max(revision + 1, clock.GetUtcNow().ToUnixTimeMilliseconds());
-    private void AddFeed(string kind, string text)
+    private void AddFeed(string kind, string text, string? effect = null, int repeatCount = 1, bool demo = false)
     {
-        feed.Add(new(Guid.NewGuid().ToString("N"), kind, text, clock.GetUtcNow()));
+        feed.Add(new(Guid.NewGuid().ToString("N"), kind, text, clock.GetUtcNow(), effect, repeatCount, demo));
         if (feed.Count > 40) feed.RemoveAt(0);
     }
     private SessionSnapshot SnapshotUnsafe() => new(revision, startedAt, clock.GetUtcNow(), settings,
         guests.Values.OrderBy(g => g.Seat).ToArray(), orders.ToArray(), feed.ToArray(),
-        new(served, likes, diamonds), demoRunning, connector);
+        new(served, likes, diamonds), demoRunning, connector, kitchenBoostUntil);
     private static string Clean(string text, int length) => string.Concat(text.Trim().EnumerateRunes()
         .Where(r => !Rune.IsControl(r)).Take(length).Select(r => r.ToString()));
 

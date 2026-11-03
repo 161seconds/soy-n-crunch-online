@@ -1,29 +1,33 @@
 # Kết quả xác minh ứng dụng
 
-## Đã kiểm tra — cập nhật 03/11/2026
+## Đã kiểm tra — 03/11/2026
 
-- Backend .NET 10 Release build và **238 xUnit test qua**, không có warning; gồm tên tiếng Việt của cả 28 món, tên gọi tắt không cần `!`, lệnh cũ, hoa/thường, có/không dấu, Unicode tổ hợp, khoảng trắng, câu trò chuyện không tạo đơn và chu kỳ xử lý từng món. Decoder connector cũng nhận đúng tên tiếng Việt qua fixture protobuf; luật gameplay, API/Host/Origin và username vẫn qua.
-- Frontend TypeScript/Vite build và **37 Vitest test qua** cho 49 chỗ ngồi tại 25 bàn (24 bàn đôi, một bàn đơn), khoảng cách giữa các hàng, lối đi giữa, khoảng hở menu/hàng đầu và chân cảnh/hàng cuối, vị trí vào quán, snapshot tới sai thứ tự, danh mục, phân trang đúng nhóm không lặp/thiếu món và lệnh vẽ của cả 28 món. Test backend xác nhận ID ghế 0–48, từ chối khách thứ 50, khách đã có chỗ vẫn bình luận/gọi món khi đầy. Kiểm tra Canvas dùng ngữ cảnh giả, không phải kiểm chứng ảnh thực tế. Rollup có hai warning annotation `PURE` từ package SignalR; build hoàn tất.
-- Đã đổi nền thành một xe sữa/bánh ở giữa, dời hai đèn sang hai bên và khói về đúng nồi sữa. XML SVG hợp lệ, chỉ còn một tham chiếu xe và mọi tham chiếu nội bộ đều tồn tại. Phần đầu dùng CSS Grid xếp dọc địa danh, tên, phụ đề, thống kê và lời mời; bỏ các mốc vị trí tuyệt đối riêng gây đè chữ. Menu tách dưới xe. Đã chạy lại 37 test FE và build sau thay đổi này.
-- HTTP thực tế: backend health và frontend trả 200.
-- Smoke test qua hai SignalR client thật: đồng bộ, ngắt/kết nối lại lấy snapshot, đơn món hoàn tất, combo quà, sự kiện lặp, giới hạn 49 chỗ và gọi đủ 28 món bằng tên tiếng Việt không cần `!`. Danh mục API khớp JSON dùng chung. Script chạy với phiên thử có thể xóa; từ chối nếu đang có khách thật/TikTok đang kết nối.
-- Đã publish backend 49 chỗ vào `artifacts/app`; frontend mới được cập nhật cả ở đó và `backend/SoyCrunch.Api/wwwroot`. `/overlay` trên BE đang chạy trả HTML tham chiếu đúng JS/CSS mới; SHA-256 của hai asset phục vụ qua HTTP khớp bản build. Bundle chứa đúng câu **“hãy comment để đặt món và vào bàn nhé”**. Thông báo là phần tử HTML luôn hiện dưới thống kê, chữ kem trên nền xanh tối; đã bỏ dòng lời mời trên sân.
-- Lần kiểm tra dependency trước không phát hiện vulnerability từ npm/NuGet, gồm dependency transitive; đợt cập nhật này không thay dependency.
+- **272 xUnit test qua**, không warning, với `dotnet test backend/SoyCrunch.slnx -c Release --artifacts-path artifacts/validation`. Bao phủ menu 28 món, chu kỳ bếp, 49 chỗ, validation, chống trùng; thêm alias quà/Unicode, giữ thưởng theo điểm, mời món qua luật chung, cooldown khi bếp nhanh, thời hạn boost/làm mới/reset và mốc điểm cộng dồn. Fixture protobuf đi qua decoder thư viện thật, kiểm tra combo Rose chỉ nhận cuối chuỗi và không lặp thưởng.
+- **51 Vitest test qua**, TypeScript/Vite build thành công. Kiểm tra layout/menu, snapshot tới sai thứ tự và cả chín lệnh vẽ quà: tọa độ/alpha hợp lệ, trần hạt, combo, kết quả giống nhau giữa client, hạn 7 giây, dữ liệu cũ/tương lai, mốc cộng đồng và giảm chuyển động. Canvas dùng context giả, không chứng minh chất lượng ảnh thực tế. Build còn hai warning `PURE` từ package SignalR như trước; không thêm dependency.
+- **Smoke test API/SignalR qua trên bản publish mới**, dùng phiên riêng cổng **5187**: hai client thật đồng bộ, ngắt/kết nối lại lấy snapshot, đơn hoàn tất, ba tier và sáu chủ đề quà, mời món, deadline tăng tốc, mốc 100 điểm/chống phát lại, 49 chỗ và đủ 28 tên món tiếng Việt. `/api/menu` và `/api/gifts` khớp JSON dùng chung. Script tự dọn phiên thử; server 5187 đã dừng sau kiểm tra.
+- Build Release mặc định và publish `artifacts/app` thành công, không warning. Lần build Release ban đầu gặp khóa `SoyCrunch.Api.exe` bởi BE đang chạy; đã kiểm thử bằng output riêng rồi build lại mặc định thành công sau khi thay runtime.
+- **BE mới đang chạy cổng 5186**, FE/Vite cổng **5176**. `/`, `/overlay`, health và hai đường `/api/gifts` trực tiếp/qua proxy trả đúng dữ liệu. JS/CSS phục vụ qua HTTP có SHA-256 khớp `frontend/dist`; bundle có câu mời bình luận, chín chủ đề và bộ thử combo. Bằng chứng runtime: `artifacts/evidence/gift-interactions-runtime.json`.
+- Trước restart, phiên cũ không có khách/đơn và TikTok idle; có **111 điểm thử**. Đã lưu snapshot tại `artifacts/evidence/pre-gift-upgrade-session.json`, giữ tên **Sữa & Bánh** và trạng thái nhận món. Theo luật lưu trong RAM, restart mở phiên mới với thống kê 0; không phát lại điểm/quà cũ thành tương tác mới.
+- Nền vẫn một xe ở giữa, 25 bàn/49 chỗ và lời mời bình luận. Thanh mục tiêu quà thay dòng trang trí chân cảnh. `git diff --check` sạch. Không có thay đổi dependency so với lần kiểm tra bảo mật trước.
 
 ## Chưa kiểm tra
 
-- Quan sát trực tiếp UI desktop/mobile, chất lượng hình ảnh và FPS: lần kiểm tra bố cục một xe nhận lỗi `The browser access host is unavailable`. Các kiểm tra build, SVG và asset HTTP không thay cho quan sát giao diện thực tế.
-- Âm thanh nghe thực tế, giọng Việt trên máy, capture OBS/TikTok LIVE Studio và vùng bị giao diện TikTok che.
-- Sự kiện TikTok thật: xem [báo cáo connector](05-connector-verification.md).
+- Quan sát UI desktop/mobile, chất lượng ảnh và FPS: browser host vẫn báo `The browser access host is unavailable`. Build, Canvas giả và asset HTTP không thay cho quan sát thực tế.
+- Âm thanh/giọng Việt nghe thực tế, capture OBS/TikTok LIVE Studio và vùng bị giao diện TikTok che.
+- Quà/bình luận/tim TikTok thật: probe mới lúc **05:11 UTC, 03/11/2026** vẫn trả `LiveStream for HostID could not be found. Is the Host online?` cho `@one61secondz`, cả bốn bộ đếm đều 0. Không kết luận người dùng có/không LIVE chỉ từ lỗi thư viện. Đã lưu `artifacts/evidence/gift-interactions-connector.json`, đưa connector về idle; chưa có bằng chứng nhận quà thật. Xem thêm [báo cáo connector trước](05-connector-verification.md). Alias theo tên có thể cần bổ sung theo vùng; tên lạ dùng hiệu ứng theo điểm.
 
 ## Lệnh chạy lại
 
 ```powershell
-dotnet test backend/SoyCrunch.slnx
+dotnet test backend/SoyCrunch.slnx -c Release --artifacts-path artifacts/validation
 npm --prefix frontend test
 npm --prefix frontend run build
-# Backend cần đang chạy; script xóa phiên thử hiện tại.
+
+# Phiên thử riêng, không chiếm BE đang dùng ở 5186:
+dotnet artifacts/app/SoyCrunch.Api.dll --urls http://127.0.0.1:5187
+# Terminal khác; script xóa phiên thử ở 5187:
+$env:SOYCRUNCH_API = 'http://127.0.0.1:5187'
 npm --prefix frontend run test:integration
 ```
 
-Hướng dẫn nghiệm thu thủ công: mở bảng điều khiển và overlay, mời 12 khách, chọn từng nhóm menu và thử sữa đậu xanh, panna cotta, yogurt đá, bánh tráng với các tên khác nhau; dừng/chạy menu; thử tim/quà, ngưng nhận món, tải lại overlay và xác nhận hai cửa sổ cùng trạng thái. Reset chỉ thực hiện sau xác nhận mất dữ liệu phiên.
+Thử thủ công tại **Quà TikTok · 9 kiểu tương tác**: chọn từng quà, số lượng combo rồi **Thử quà**; thử Rose ×100 để vượt mốc, GG để tăng tốc, Ice Cream khi đang có món/đóng bếp và Swan khi gần đầy. Mở hai overlay, bật giảm chuyển động, tải lại giữa hiệu ứng để kiểm tra hết hạn. Các điểm thử không phải bảng giá TikTok.
