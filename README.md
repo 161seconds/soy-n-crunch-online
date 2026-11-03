@@ -4,7 +4,7 @@ An interactive virtual milk, dessert, and street snack shop for TikTok LIVE. Bui
 
 ## Scope
 
-One local streaming PC, one live session, 18 tables with 36 seats, 28 menu items, simulated viewer events, and a portrait overlay. Session state lives in memory. Restarting the backend or resetting the session clears it. This is an entertainment overlay, not a food ordering or payment system.
+One local streaming PC, one live session, 25 tables with 49 seats (24 pairs and one single), 28 menu items, simulated viewer events, and a portrait overlay. Session state lives in memory. Restarting the backend or resetting the session clears it. This is an entertainment overlay, not a food ordering or payment system.
 
 ## Documentation
 
@@ -44,7 +44,7 @@ Click **Mời 12 khách** to simulate activity. Enter a guest name, choose a men
 
 The backend and frontend share [menu.json](menu.json). It contains names, commands, aliases, preparation times, and artwork styles; prices are not displayed. See the [complete menu](docs/07-menu.md).
 
-The lakeside overlay illustrates Xuan Huong Lake in Da Lat at night, with moonlight, warm lamps, pine-covered hills, and Lam Vien Square's wild sunflower and artichoke landmarks. Two compact food carts frame the lake view; the lit terrace keeps all 18 tables and 36 seats, with a center aisle and space above the first row for the menu. The original SVG background is bundled locally.
+The lakeside overlay illustrates Xuan Huong Lake in Da Lat at night, with moonlight, warm lamps, pine-covered hills, and Lam Vien Square's wild sunflower and artichoke landmarks. One centered cart serves milk, pastries, and cold desserts. The title, subtitle, stats, and comment invitation form a spaced vertical header; the menu sits below the cart. The lit terrace fits 25 tables and 49 seats in seven compact rows, with a center aisle. The last table has one seat and sits left of the aisle. The original SVG background is bundled locally.
 
 All simulated guests are marked as such. Enter a public TikTok username and click **Kết nối** after starting a LIVE. The initial C# connector verification returned `LiveNotFoundException` for `@one61secondz`; actual live events remain unverified. A failed connection never enables a fake “connected” state.
 

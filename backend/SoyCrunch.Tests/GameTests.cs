@@ -12,14 +12,18 @@ public sealed class GameTests
         new(Guid.NewGuid().ToString("N"), id, "Alice", "chat", text);
 
     [Fact]
-    public void CapacityIs36WithUniqueSeatsAndExistingGuestsCanStillChat()
+    public void CapacityIs49WithUniqueSeatsAndExistingGuestsCanStillChatAndOrder()
     {
         var game = Game();
-        for (var i = 0; i < 36; i++)
+        for (var i = 0; i < 49; i++)
             Assert.Equal("accepted", game.Handle(Chat("xin chào", $"user-{i}")).Outcome);
-        Assert.Equal("full", game.Handle(Chat(id: "extra")).Outcome);
-        Assert.Equal(36, game.Snapshot().Guests.Select(g => g.Seat).Distinct().Count());
+        var overflow = game.Handle(Chat(id: "extra"));
+        Assert.Equal("full", overflow.Outcome);
+        Assert.Contains("49", overflow.Message);
+        Assert.Equal(Enumerable.Range(0, 49), game.Snapshot().Guests.Select(g => g.Seat));
         Assert.Equal("accepted", game.Handle(Chat("hello", "user-0")).Outcome);
+        Assert.Equal("accepted", game.Handle(Chat(id: "user-48")).Outcome);
+        Assert.Equal("user-48", Assert.Single(game.Snapshot().Orders).GuestId);
     }
 
     public static IEnumerable<object[]> MenuCommands() => MenuCatalog.Items.SelectMany(item =>

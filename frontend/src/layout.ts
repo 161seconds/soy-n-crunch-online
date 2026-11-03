@@ -1,15 +1,15 @@
 export const WIDTH = 1080;
 export const HEIGHT = 1920;
-export const TABLE_COUNT = 18;
-export const CAPACITY = TABLE_COUNT * 2;
+export const CAPACITY = 49;
+export const TABLE_COUNT = Math.ceil(CAPACITY / 2);
 
 export function tableAt(index: number) {
   const row = Math.floor(index / 4),
-    columns = Math.min(4, TABLE_COUNT - row * 4);
+    columns = Math.max(2, Math.min(4, TABLE_COUNT - row * 4));
   return {
     x: WIDTH / 2 + ((index % 4) - (columns - 1) / 2) * 260,
-    y: 1150 + row * 154,
-    scale: 0.66 + row * 0.02,
+    y: 1122 + row * 110,
+    scale: 0.52,
   };
 }
 

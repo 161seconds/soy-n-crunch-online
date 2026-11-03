@@ -2,13 +2,14 @@
 
 ## Nhận diện
 
-Tên hiển thị mặc định: **Sữa & Giòn**. Quán ven Hồ Xuân Hương, Đà Lạt vào ban đêm: trời xanh đậm, trăng và sao, đồi thông tối, ánh đèn vàng phản xuống hồ. Bờ đối diện có hoa dã quỳ vàng và nụ atisô xanh của quảng trường Lâm Viên, lấy bố cục từ ảnh tham khảo người dùng cung cấp. Hai quầy nhỏ có mái sọc xanh/kem và đèn ấm; sân bàn vẫn đủ sáng để nhìn khách và món. Màu cơ bản: trời `#101e30`, nước hồ `#153642`, kem `#fff1cc`, xanh quán `#203d37`, ánh đèn `#ffe2a1`.
+Tên hiển thị mặc định: **Sữa & Giòn**. Quán ven Hồ Xuân Hương, Đà Lạt vào ban đêm: trời xanh đậm, trăng và sao, đồi thông tối, ánh đèn vàng phản xuống hồ. Bờ đối diện có hoa dã quỳ vàng và nụ atisô xanh của quảng trường Lâm Viên, lấy bố cục từ ảnh tham khảo người dùng cung cấp. Một xe bán sữa, bánh và món lạnh nằm giữa bờ hồ, có mái sọc xanh/kem và đèn ấm; sân bàn vẫn đủ sáng để nhìn khách và món. Màu cơ bản: trời `#101e30`, nước hồ `#153642`, kem `#fff1cc`, xanh quán `#203d37`, ánh đèn `#ffe2a1`.
 
 ## Overlay
 
 - Không gian thiết kế 1080×1920, tự co theo cửa sổ, giữ tỷ lệ 9:16.
-- Trên: tên quán, địa danh và thống kê ngắn trên nền trời; tiếp đến đồi thông, Lâm Viên và mặt hồ. Hai quầy nhỏ đặt hai bên bờ hồ, chừa khoảng giữa nhìn ra nước. Menu nằm ngay dưới quầy.
-- Sân lát đá chiếm phần dưới, giữ 18 bàn hai chỗ theo hàng 4 + 4 + 4 + 4 + 2. Lối đi giữa quán không có bàn; hàng đầu chừa chỗ cho menu/bong bóng, hàng cuối nằm trên bảng chữ chân cảnh. Số chỗ và ID ghế giữ nguyên.
+- Trên: địa danh, tên quán, phụ đề, thống kê và lời mời nằm trong một khối CSS Grid xếp dọc có khoảng cách. Không định vị tuyệt đối từng dòng; tên quán dài được xuống dòng. Tiếp đến đồi thông, Lâm Viên và mặt hồ; một xe nằm giữa bờ, hai đèn đặt hai bên. Menu tách dưới xe, phía trên khu bàn.
+- Dưới thống kê luôn có thông báo **“hãy comment để đặt món và vào bàn nhé”**, chữ kem trên nền xanh tối. Không vẽ lời mời chìm trên sân hoặc sát mặt bàn.
+- Sân lát đá chiếm phần dưới, có 25 bàn theo bảy hàng 4 + 4 + 4 + 4 + 4 + 4 + 1, tổng cộng 49 chỗ. Bàn cuối một chỗ nằm bên trái lối đi giữa. Thu nhỏ bàn/khách và khoảng cách hàng để hàng đầu chừa chỗ cho menu/bong bóng, hàng cuối nằm trên bảng chữ chân cảnh. ID ghế từ 0 đến 48.
 - Chừa biên phải/bottom cho giao diện TikTok; phải thử capture thực tế vì UI từng thiết bị có thể khác nhau.
 - Tên khách có nền tương phản, rút gọn khi dài. Bong bóng bình luận có thời hạn, hiệu ứng có trần.
 - Nhãn “MÔ PHỎNG” xuất hiện khi có khách/bot giả; không trình bày bot thành người xem thật.
@@ -30,4 +31,4 @@ Món trên tay dùng kiểu hình trong danh mục: ly sữa theo màu, ly đá,
 
 ## QA hình ảnh
 
-Kiểm tra tên tiếng Việt trên nền tối, độ tương phản chữ/menu, tên dài, 0/1/36 khách, lối đi giữa, khoảng hở menu/hàng đầu và bảng chữ/hàng cuối, bong bóng cùng lúc, quà liên tiếp, overlay 540×960 và cửa sổ ngang, màu/trạng thái món và khả năng đọc khi capture 1080×1920. Test tọa độ tự động không thay cho quan sát/capture thực tế.
+Kiểm tra tên tiếng Việt trên nền tối, độ tương phản chữ/menu, tên dài, 0/1/49 khách, lối đi giữa, khoảng hở menu/hàng đầu và bảng chữ/hàng cuối, bong bóng cùng lúc, quà liên tiếp, overlay 540×960 và cửa sổ ngang, màu/trạng thái món và khả năng đọc khi capture 1080×1920. Test tọa độ tự động không thay cho quan sát/capture thực tế.

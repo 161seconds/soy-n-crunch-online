@@ -6,7 +6,7 @@ Quán sữa hạt, món lạnh và bánh ăn vặt ảo trên TikTok LIVE. Ngư�
 
 ## MVP
 
-- Một quán ven Hồ Xuân Hương, Đà Lạt vào ban đêm, một phiên live, tối đa 36 khách, 18 bàn hai chỗ.
+- Một quán ven Hồ Xuân Hương, Đà Lạt vào ban đêm, một phiên live, tối đa 49 khách: 24 bàn hai chỗ và một bàn một chỗ.
 - 28 món thuộc 3 nhóm: 14 món sữa hạt, 8 món lạnh và 6 món bánh/ăn vặt. Có sữa đậu xanh, panna cotta bốn vị và yogurt đá; không có tàu hủ. Danh sách/lệnh gọi tại [thực đơn](07-menu.md).
 - Gọi món bằng tên tiếng Việt hoặc tên gọi tắt, không cần `!`: `sữa đậu xanh`, `đậu xanh`, `panna cotta`, `yogurt đá`, `bánh tráng nướng`. Không phân biệt hoa/thường, dấu tiếng Việt, khoảng trắng hay Unicode tổ hợp; toàn bộ bình luận phải khớp tên/alias. Giữ lệnh cũ như `!sua`, `!banh`. Menu chỉ hiện tên món và hướng dẫn gõ tên, không hiện giá.
 - Bình luận đầu tiên hoặc sự kiện vào phòng tạo khách nếu còn chỗ. Bình luận thường hiện bong bóng, không đọc thành tiếng.
@@ -30,7 +30,7 @@ Quán sữa hạt, món lạnh và bánh ăn vặt ảo trên TikTok LIVE. Ngư�
 - Không có TikTok vẫn chạy được toàn bộ luồng bằng sự kiện giả, có nhãn mô phỏng.
 - Hai cửa sổ nhận cùng số khách, đơn, lượt phục vụ và điểm phiên.
 - Cả 28 món gọi được bằng tên tiếng Việt không cần `!`, hoàn tất đúng chu kỳ; menu overlay chia trang tối đa bốn món cùng nhóm, đổi mỗi 8 giây, có nút dừng và mặc định dừng khi bật giảm chuyển động.
-- 36 khách có chỗ riêng; khách thứ 37 nhận kết quả đầy quán.
+- 49 khách có chỗ riêng, ID ghế từ 0 đến 48; khách thứ 50 nhận kết quả đầy quán. Khách đã có chỗ vẫn bình luận và gọi món khi đầy.
 - Lệnh lặp, combo quà và sự kiện gửi lại không tạo đơn/điểm ngoài luật.
 - Sau tải lại overlay, phiên đang chạy tiếp tục; sau restart backend, phiên bắt đầu mới.
 - Có thể capture overlay 1080×1920; người vận hành bật tiếng bằng thao tác trực tiếp.

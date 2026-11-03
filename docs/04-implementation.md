@@ -13,7 +13,7 @@ Backend có validation, chỗ ngồi, đơn món, cooldown, chống trùng, chu 
 
 ## Chặng 2 — Hai màn hình
 
-React có bảng điều khiển và overlay 9:16; dùng chung dữ liệu SignalR. Bộ mô phỏng gửi cùng loại sự kiện với adapter. Canvas dựng cảnh không cần asset bên ngoài. Kiểm tra vị trí 36 chỗ tại 18 bàn, đồng bộ snapshot cũ/mới, build TypeScript và UI thật.
+React có bảng điều khiển và overlay 9:16; dùng chung dữ liệu SignalR. Bộ mô phỏng gửi cùng loại sự kiện với adapter. Canvas dựng cảnh không cần asset bên ngoài. Kiểm tra vị trí 49 chỗ tại 25 bàn, bàn cuối một chỗ, đồng bộ snapshot cũ/mới, build TypeScript và UI thật.
 
 Danh mục 28 món dùng chung `menu.json`. Khi đổi món phải kiểm tra cả lệnh/alias, tên trong nhật ký/bếp, thời gian chuẩn bị, bot mô phỏng, hình trên tay và menu overlay. Không có nhóm tàu hủ hoặc giá bán.
 

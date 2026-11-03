@@ -304,8 +304,8 @@ function draw(c: Context, session: Session, now: number, reduced: boolean) {
     c.globalAlpha = (1 - age) * 0.25;
     oval(
       c,
-      812 + Math.sin(t + i) * 12,
-      809 - age * 65,
+      456 + Math.sin(t + i) * 12,
+      768 - age * 65,
       5 + age * 10,
       8 + age * 12,
       "#fff0d9",
@@ -335,8 +335,6 @@ function draw(c: Context, session: Session, now: number, reduced: boolean) {
     box(c, x - 12, y - 25, 24, 20, 3, "#e8e5cd");
     label(c, String(i + 1).padStart(2, "0"), x, y - 14, 12, "#6e654d");
   }
-  if (!session.guests.length)
-    label(c, "Bình luận để ghé quán nhé", 540, 1098, 29, "#816b4a", 500);
   for (const guest of [...session.guests].sort((a, b) => a.seat - b.seat))
     person(
       c,
@@ -404,24 +402,27 @@ export default function Scene({
         role="img"
         aria-label={`Quán ${session.settings.title} bên Hồ Xuân Hương, Đà Lạt, ${TABLE_COUNT} bàn, ${CAPACITY} chỗ, ${session.guests.length} khách, ${menu.length} món sữa hạt, bánh và món lạnh.`}
       />
-      <div className="scene-brand">
-        <span>HỒ XUÂN HƯƠNG · ĐÀ LẠT</span>
-        <h2>{session.settings.title}</h2>
-        <p>Sữa hạt · Bánh giòn · Ngọt mát</p>
-      </div>
-      <div className="scene-stats">
-        <span>
-          <b>
-            {session.guests.length}/{CAPACITY}
-          </b>{" "}
-          khách ghé
-        </span>
-        <span>
-          <b>{session.stats.served}</b> món đã dùng
-        </span>
-        <span>
-          <b>{session.stats.likes}</b> lượt tim
-        </span>
+      <div className="scene-header">
+        <div className="scene-brand">
+          <span>HỒ XUÂN HƯƠNG · ĐÀ LẠT</span>
+          <h2>{session.settings.title}</h2>
+          <p>Sữa hạt · Bánh giòn · Ngọt mát</p>
+        </div>
+        <div className="scene-stats">
+          <span>
+            <b>
+              {session.guests.length}/{CAPACITY}
+            </b>
+            khách ghé
+          </span>
+          <span>
+            <b>{session.stats.served}</b> món đã dùng
+          </span>
+          <span>
+            <b>{session.stats.likes}</b> lượt tim
+          </span>
+        </div>
+        <p className="scene-invite">hãy comment để đặt món và vào bàn nhé</p>
       </div>
       <div
         className="scene-menu"

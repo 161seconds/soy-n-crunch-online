@@ -99,7 +99,7 @@ try {
     () => firstState?.stats.served === 1 && secondState?.stats.served === 1,
     13_000,
   );
-  for (let i = 1; i < 36; i++)
+  for (let i = 1; i < 49; i++)
     await request("/api/events", event("join", { viewerId: `smoke-${i}` }));
   assert.equal(
     (
@@ -111,9 +111,12 @@ try {
     "full",
   );
   await until(
-    () => firstState?.guests.length === 36 && secondState?.guests.length === 36,
+    () => firstState?.guests.length === 49 && secondState?.guests.length === 49,
   );
-  assert.equal(new Set(firstState.guests.map((guest) => guest.seat)).size, 36);
+  assert.deepEqual(
+    firstState.guests.map((guest) => guest.seat),
+    Array.from({ length: 49 }, (_, i) => i),
+  );
   await request("/api/session/reset", {});
   for (const item of menu) {
     const result = await request(
@@ -134,7 +137,7 @@ try {
       secondState?.orders.length === menu.length,
   );
   console.log(
-    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, gift streak, replay protection, 36-seat capacity, all 28 Vietnamese dish names without !.",
+    "PASS: two SignalR clients, reconnect snapshot, order lifecycle, gift streak, replay protection, 49-seat capacity, all 28 Vietnamese dish names without !.",
   );
 } finally {
   await first.stop();

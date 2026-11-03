@@ -4,7 +4,7 @@ namespace SoyCrunch.Api.Game;
 
 public sealed class GameService(TimeProvider clock)
 {
-    public const int Capacity = 36;
+    public const int Capacity = 49;
     private readonly object gate = new();
     private readonly Dictionary<string, Guest> guests = [];
     private readonly Dictionary<string, DateTimeOffset> lastOrders = [];
